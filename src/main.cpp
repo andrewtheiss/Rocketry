@@ -27,6 +27,12 @@ void setup() {
 	uint8_t size = external_psram_size;
 	Serial.printf("EXTMEM Memory Test, %d Mbyte\n", size);
 	if (size == 0) return;
+	// Ensure this is 16 for 16MB RAM
+	if (size != 16) {
+		Serial.println("Incorrect RAM size detected!");
+		return;
+	}
+
 	const float clocks[4] = {396.0f, 720.0f, 664.62f, 528.0f};
 	const float frequency = clocks[(CCM_CBCMR >> 8) & 3] / (float)(((CCM_CBCMR >> 29) & 7) + 1);
 	Serial.printf(" CCM_CBCMR=%08X (%.1f MHz)\n", CCM_CBCMR, frequency);
