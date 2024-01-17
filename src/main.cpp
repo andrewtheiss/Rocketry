@@ -63,6 +63,7 @@ void parseMenu(char c);
 #include <SPI.h> // Included for SFE_LSM9DS0 library
 #include <Wire.h>
 #include <SFE_LSM9DS0.h>
+#include <Adafruit_BluefruitLE_SPI.h>
 
 ///////////////////////
 // Example I2C Setup //
@@ -80,7 +81,12 @@ void parseMenu(char c);
 ///////////////////////
 #define LSM9DS0_CSG  10  // CSG connected to Arduino pin 9
 #define LSM9DS0_CSXM 9 // CSXM connected to Arduino pin 10
-LSM9DS0 dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM);
+LSM9DS0 dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM); 
+
+// Setup for Bluetooth LE Friend
+#define BLUEFRUIT_SPI_CS               8
+#define BLUEFRUIT_SPI_IRQ              7
+#define BLUEFRUIT_SPI_RST              3
 
 ///////////////////////////////
 // Interrupt Pin Definitions //
@@ -111,6 +117,8 @@ void setup()
   // accelerometers WHO_AM_I response. You can check this to make sure
   // communication was successful.
   Serial.println(status, HEX);
+
+  Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 }
 
 void loop()
