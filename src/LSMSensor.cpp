@@ -8,25 +8,40 @@ LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) {
     printRaw = true;
 }
 
-
-void LSMSensor::init() {
-    pinMode(INT1XM, INPUT);
-    pinMode(INT2XM, INPUT);
-    pinMode(DRDYG, INPUT);
-    Serial.begin(115200); // Start serial at 115200 bps
-   
-    // LSM9DS0 Library Init
-    uint16_t status = dof.begin();
-    Serial.println(status, HEX);
-    
+byte LSMSensor::read_1_reg(byte CS,byte adress){
   // Use the begin() function to initialize the LSM9DS0 library.
   // You can either call it with no parameters (the easy way):
+  uint16_t status = dof.begin();
   // Or call it with declarations for sensor scales and data rates:  
-  //uint16_t status = dof.begin(dof.G_SCALE_2000DPS, dof.A_SCALE_6G, dof.M_SCALE_2GS);
+  //uint16_t status = dof.begin(dof.G_SCALE_2000DPS, 
+  //                            dof.A_SCALE_6G, dof.M_SCALE_2GS);
 
-  // begin() returns a 16-bit value which includes both the gyro and
-  // accelerometers WHO_AM_I response. You can check this to make sure
-  // communication was successful.
+  // begin() returns a 16-bit value which includes both the gyro 
+  // and accelerometers WHO_AM_I response. You can check this to
+  // make sure communication was successful.
+  Serial.print("LSM9DS0 WHO_AM_I's returned: 0x");
+  Serial.println(status, HEX);
+  Serial.println("Should be 0x49D4");
+  Serial.println();
+  delay(5000);
+}
+
+void LSMSensor::init() {
+  // put your setup code here, to run once:
+
+  pinMode(CS_ax, OUTPUT);
+  pinMode(LSM9DS0_CSG, OUTPUT);
+  digitalWrite(LED_BUILTIN,LOW);
+  Serial.begin(9600);
+
+
+  digitalWriteFast(CS_ax, HIGH);   //Lib has just digitalWrite
+  digitalWriteFast(LSM9DS0_CSG, HIGH);   //Lib has just digitalWrite
+  SPI.begin();
+  byte who = read_1_reg(CS_ax,who_reg);
+  Serial.println(who,HEX);
+  delay(10000);
+  // put your main code here, to run repeatedly:
 }
 
 void LSMSensor::printAccel()

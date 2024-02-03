@@ -12,15 +12,15 @@
 TouchScreenTFT touchScreen;
 LSMSensor adaFruitLSM;
 
-#define REMOTE_DETONATION_SAFE_STATE true
-#define REMOTE_DETONATION_ARMED_STATE false
-bool solenoidState = true;
+#define REMOTE_DETONATION_SAFE_STATE false
+#define REMOTE_DETONATION_ARMED_STATE true
+bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
 void setup()
 {
   touchScreen.init();
   adaFruitLSM.init();
   Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
-  digitalWrite(SOLENOID_PIN, solenoidState);
+  digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
   pinMode(SOLENOID_PIN, OUTPUT); // Initialize the solenoid pin as an output
 }
 

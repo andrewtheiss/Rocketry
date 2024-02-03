@@ -14,6 +14,9 @@
 #define LSM9DS0_CSXM 30 // CSXM connected to Arduino pin 10
 
 
+const byte CS_ax = 30;
+const byte who_reg = 0x0F;
+const byte READ = 0b10000000;
 ///////////////////////////////
 // Interrupt Pin Definitions //
 ///////////////////////////////
@@ -44,6 +47,7 @@ private:
     const byte INT1XM = 2;
     const byte INT2XM = 3;
     const byte DRDYG = 4;
+    byte read_1_reg(byte CS,byte adress);
 };
 #endif // LSM_SENSOR_H  
 

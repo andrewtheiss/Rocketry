@@ -51,6 +51,7 @@ unsigned int TouchScreenTFT::checkTouch() {
     if (p.x >= BUTTON_1_RED_X && p.x < (BUTTON_1_RED_X + BUTTON_W)) {
       if (p.y >= BUTTON_1_RED_Y && p.y < (BUTTON_1_RED_Y + BUTTON_H)) {
         button1Function();
+        return 1;
       }
     }
   }
