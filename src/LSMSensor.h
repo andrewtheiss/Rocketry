@@ -14,15 +14,14 @@
 #define LSM9DS0_CSXM 30 // CSXM connected to Arduino pin 10
 
 
-const byte CS_ax = 30;
 const byte who_reg = 0x0F;
 const byte READ = 0b10000000;
 ///////////////////////////////
 // Interrupt Pin Definitions //
 ///////////////////////////////
-const byte INT1XM = 2; // INT1XM tells us when accel data is ready
-const byte INT2XM = 3; // INT2XM tells us when mag data is ready
-const byte DRDYG = 4;  // DRDYG tells us when gyro data is ready
+const byte INT1XM = 37; // INT1XM tells us when accel data is ready
+const byte INT2XM = 38; // INT2XM tells us when mag data is ready
+const byte DRDYG = 39;  // DRDYG tells us when gyro data is ready
 
 
 
@@ -44,10 +43,9 @@ public:
 private:
     LSM9DS0 dof;
     boolean printRaw;
-    const byte INT1XM = 2;
-    const byte INT2XM = 3;
-    const byte DRDYG = 4;
-    byte read_1_reg(byte CS,byte adress);
+    const byte INT1XM = 37;
+    const byte INT2XM = 38;
+    const byte DRDYG = 39;
 };
 #endif // LSM_SENSOR_H  
 

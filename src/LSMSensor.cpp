@@ -8,40 +8,30 @@ LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) {
     printRaw = true;
 }
 
-byte LSMSensor::read_1_reg(byte CS,byte adress){
-  // Use the begin() function to initialize the LSM9DS0 library.
-  // You can either call it with no parameters (the easy way):
-  uint16_t status = dof.begin();
-  // Or call it with declarations for sensor scales and data rates:  
-  //uint16_t status = dof.begin(dof.G_SCALE_2000DPS, 
-  //                            dof.A_SCALE_6G, dof.M_SCALE_2GS);
-
-  // begin() returns a 16-bit value which includes both the gyro 
-  // and accelerometers WHO_AM_I response. You can check this to
-  // make sure communication was successful.
-  Serial.print("LSM9DS0 WHO_AM_I's returned: 0x");
-  Serial.println(status, HEX);
-  Serial.println("Should be 0x49D4");
-  Serial.println();
-  delay(5000);
-}
 
 void LSMSensor::init() {
-  // put your setup code here, to run once:
+ Serial.begin(9600); // Initialize serial communication
+    
+    // Initialize CS pins for both gyro and XM modules
+    pinMode(LSM9DS0_CSG, OUTPUT);
+    pinMode(LSM9DS0_CSXM, OUTPUT);
+    digitalWrite(LSM9DS0_CSG, HIGH); // Deselect the gyro module
+    digitalWrite(LSM9DS0_CSXM, HIGH); // Deselect the XM module
+    
+    // Initialize SPI
+    SPI.begin();
+    SPI.setDataMode(SPI_MODE3); // The LSM9DS0 typically operates in SPI Mode 3
+    SPI.setBitOrder(MSBFIRST);  // Default bit order for SPI
+    SPI.setClockDivider(SPI_CLOCK_DIV4); // Adjust as necessary for your microcontroller and sensor speed
 
-  pinMode(CS_ax, OUTPUT);
-  pinMode(LSM9DS0_CSG, OUTPUT);
-  digitalWrite(LED_BUILTIN,LOW);
-  Serial.begin(9600);
-
-
-  digitalWriteFast(CS_ax, HIGH);   //Lib has just digitalWrite
-  digitalWriteFast(LSM9DS0_CSG, HIGH);   //Lib has just digitalWrite
-  SPI.begin();
-  byte who = read_1_reg(CS_ax,who_reg);
-  Serial.println(who,HEX);
-  delay(10000);
-  // put your main code here, to run repeatedly:
+    // Sensor-specific initialization
+    uint16_t status = dof.begin();
+    if (status == 0x49D4) {
+        Serial.println("LSM9DS0 initialized successfully");
+    } else {
+        Serial.print("LSM9DS0 initialization failed, WHO_AM_I's returned: 0x");
+        Serial.println(status, HEX);
+    }
 }
 
 void LSMSensor::printAccel()
