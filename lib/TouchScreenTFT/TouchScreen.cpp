@@ -17,13 +17,51 @@ void TouchScreenTFT::init() {
   tft.fillRect(BUTTON_4_YELLOW_X, BUTTON_4_YELLOW_Y, BUTTON_W, BUTTON_H, ILI9341_YELLOW);
 }
 
-void TouchScreenTFT::checkTouch() {
+unsigned int TouchScreenTFT::checkTouch() {
+  // Example raw touch values (minimum and maximum)
+  int touchXmin = 300;  // Replace with your minimum x value
+  int touchXmax = 3834; // Replace with your maximum x value
+  int touchYmin = 240;  // Replace with your minimum y value
+  int touchYmax = 3722; // Replace with your maximum y value
+  if (touch.touched()) {
+    // Serial.print("button touched");
+    TS_Point p = touch.getPoint();
+    Serial.print("x:");
+    Serial.print(p.x);
+    Serial.print(" y:");
+    Serial.print(p.y);
+    Serial.print("     ");
+        
+    // Adjusted map function
+    p.x = map(p.x, touchXmin, touchXmax, 0, 320);
+    p.y = map(p.y, touchYmin, touchYmax, 0, 240);
+
+  // Serial.println();
+  //   Serial.print("ax:");
+  //   Serial.print(p.x);
+  //   Serial.print(" ay:");
+  //   Serial.print(p.y);
+  //   Serial.print("     ");
+
+
+    // Check if within button boundaries and call respective functions
+    if (p.x >= BUTTON_1_RED_X && p.x < (BUTTON_1_RED_X + BUTTON_W)) {
+      if (p.y >= BUTTON_1_RED_Y && p.y < (BUTTON_1_RED_Y + BUTTON_H)) {
+        button1Function();
+      }
+    }
+  }
+    delay(10);
+  return 0;
   // Your existing loop code for handling touch events
 }
 
 // Implementation of private functions (button1Function, button2Function, etc.)
 void TouchScreenTFT::button1Function() {
-  // Implementation
+
+  Serial.println();
+  Serial.print("button 1 red");
+  Serial.println();
 }
 
 void TouchScreenTFT::button2Function() {

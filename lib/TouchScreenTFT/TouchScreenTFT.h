@@ -39,7 +39,7 @@ class TouchScreenTFT {
   public:
     TouchScreenTFT(); // Constructor
     void init(); // Initialize the touchscreen and TFT display
-    void checkTouch(); // Check for touch and handle it
+    unsigned int checkTouch(); // Check for touch and handle it
 
   private:
     ILI9341_t3 tft;
