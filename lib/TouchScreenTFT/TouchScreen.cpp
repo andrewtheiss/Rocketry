@@ -1,6 +1,8 @@
 #include "TouchScreenTFT.h"
 
 // Constructor implementation
+// ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);
+// XPT2046_Touchscreen touch(TOUCH_CS);
 TouchScreenTFT::TouchScreenTFT() : tft(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO), touch(TOUCH_CS) {}
 
 void TouchScreenTFT::init() {
@@ -23,25 +25,26 @@ unsigned int TouchScreenTFT::checkTouch() {
   int touchXmax = 3834; // Replace with your maximum x value
   int touchYmin = 240;  // Replace with your minimum y value
   int touchYmax = 3722; // Replace with your maximum y value
+  touch.begin();
   if (touch.touched()) {
     // Serial.print("button touched");
     TS_Point p = touch.getPoint();
-    Serial.print("x:");
-    Serial.print(p.x);
-    Serial.print(" y:");
-    Serial.print(p.y);
-    Serial.print("     ");
-        
+    // Serial.print("x:");
+    // Serial.print(p.x);
+    // Serial.print(" y:");
+    // Serial.print(p.y);
+    // Serial.print("     ");
+
     // Adjusted map function
     p.x = map(p.x, touchXmin, touchXmax, 0, 320);
     p.y = map(p.y, touchYmin, touchYmax, 0, 240);
 
-  // Serial.println();
-  //   Serial.print("ax:");
-  //   Serial.print(p.x);
-  //   Serial.print(" ay:");
-  //   Serial.print(p.y);
-  //   Serial.print("     ");
+  Serial.println();
+    Serial.print("ax:");
+    Serial.print(p.x);
+    Serial.print(" ay:");
+    Serial.print(p.y);
+    Serial.print("     ");
 
 
     // Check if within button boundaries and call respective functions
@@ -51,7 +54,7 @@ unsigned int TouchScreenTFT::checkTouch() {
       }
     }
   }
-    delay(10);
+    delay(100);
   return 0;
   // Your existing loop code for handling touch events
 }
