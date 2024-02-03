@@ -10,8 +10,8 @@
 ///////////////////////
 //     SPI Setup     //
 ///////////////////////
-#define LSM9DS0_CSG  10  // CSG connected to Arduino pin 9
-#define LSM9DS0_CSXM 9 // CSXM connected to Arduino pin 10
+#define LSM9DS0_CSG  31  // CSG connected to Arduino pin 9
+#define LSM9DS0_CSXM 30 // CSXM connected to Arduino pin 10
 
 
 ///////////////////////////////
