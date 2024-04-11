@@ -8,6 +8,12 @@ LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) {
     printRaw = true;
 }
 
+// LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) { 
+//     // A boolean to keep track of whether we're printing raw (ADC)
+//     // or calculated (g's, DPS, Gs) sensor data:
+//     printRaw = true;
+// }
+
 
 void LSMSensor::init() {
  Serial.begin(9600); // Initialize serial communication
@@ -38,8 +44,8 @@ void LSMSensor::printAccel()
 {
   // Only read from the accelerometer if the accel interrupts,
   // which means that new data is ready.
-  if (digitalRead(INT1XM))
-  {
+  //if (digitalRead(INT1XM))
+  //{
     // Use the readAccel() function to get new data from the accel.
     // After calling this function, new values will be stored in
     // the ax, ay, and az variables.
@@ -62,15 +68,15 @@ void LSMSensor::printAccel()
       Serial.print(", ");
       Serial.println(dof.calcAccel(dof.az));
     }
-  }
+  //}
 }
 
 void LSMSensor::printGyro()
 {
   // Only read from the gyro if the DRDY interrupts,
   // which means that new data is ready.
-  if (digitalRead(DRDYG))
-  {
+  // if (digitalRead(DRDYG))
+  // {
     // Use the readGyro() function to get new data from the gyro.
     // After calling this function, new values will be stored in
     // the gx, gy, and gz variables.
@@ -93,7 +99,7 @@ void LSMSensor::printGyro()
       Serial.print(", ");
       Serial.println(dof.calcGyro(dof.gz));
     }
-  }
+  //}
 }
 
 void LSMSensor::printMag()

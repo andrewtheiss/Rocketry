@@ -27,8 +27,10 @@ void setup()
   pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
   pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
 
- // touchScreen.init();
+  touchScreen.init();
   adaFruitLSM.init();
+  adaFruitLSM.setRaw();
+
   Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
   digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
   pinMode(SOLENOID_PIN, OUTPUT); // Initialize the solenoid pin as an output
@@ -44,29 +46,29 @@ void toggleSolenoid()
 }
 
 void useTouchScreen() {
-    // // Ensure both LSM9DS0 CS lines are inactive
-    // digitalWrite(LSM9DS0_CSG, HIGH);
-    // digitalWrite(LSM9DS0_CSXM, HIGH);
+    // Ensure both LSM9DS0 CS lines are inactive
+    digitalWrite(LSM9DS0_CSG, HIGH);
+    digitalWrite(LSM9DS0_CSXM, HIGH);
 
-    // SPI.beginTransaction(settingsTouchScreen);
-    // digitalWrite(TOUCH_CS, LOW); // Activate touchscreen
-    // // Perform touchscreen operations
-    // // ================================================
+    SPI.beginTransaction(settingsTouchScreen);
+    digitalWrite(TOUCH_CS, LOW); // Activate touchscreen
+    // Perform touchscreen operations
+    // ================================================
 
 
-    // unsigned int touchCommand = touchScreen.checkTouch();
-    // switch (touchCommand)
-    //   {
-    //     case 1:
-    //       toggleSolenoid();
-    //       break;
-    //     default:
-    //       break;
-    // }    
+    unsigned int touchCommand = touchScreen.checkTouch();
+    switch (touchCommand)
+      {
+        case 1:
+          toggleSolenoid();
+          break;
+        default:
+          break;
+    }    
 
-    // // ================================================
-    // digitalWrite(TOUCH_CS, HIGH); // Deactivate touchscreen
-    // SPI.endTransaction();
+    // ================================================
+    digitalWrite(TOUCH_CS, HIGH); // Deactivate touchscreen
+    SPI.endTransaction();
 }
 
 void useLSM9DS0Gyro() {
@@ -77,6 +79,7 @@ void useLSM9DS0Gyro() {
     SPI.beginTransaction(settingsLSMSensor);
     digitalWrite(LSM9DS0_CSG, LOW); // Activate LSM9DS0 Gyro
     // Perform LSM9DS0 Gyro operations
+    adaFruitLSM.printGyro();
     digitalWrite(LSM9DS0_CSG, HIGH); // Deactivate LSM9DS0 Gyro
     SPI.endTransaction();
 }
@@ -89,6 +92,7 @@ void useLSM9DS0AccelMag() {
     SPI.beginTransaction(settingsLSMSensor);
     digitalWrite(LSM9DS0_CSXM, LOW); // Activate LSM9DS0 Accel/Mag
     // Perform LSM9DS0 Accel/Mag operations
+    adaFruitLSM.printAccel();
     digitalWrite(LSM9DS0_CSXM, HIGH); // Deactivate LSM9DS0 Accel/Mag
     SPI.endTransaction();
 }
@@ -96,13 +100,13 @@ void useLSM9DS0AccelMag() {
 void loop()
 {
     // Example of using the touchscreen
-    useTouchScreen();
+    //useTouchScreen();
     
     // Example of using the LSM9DS0 Gyro
     //useLSM9DS0Gyro();
     
     // Example of using the LSM9DS0 Accel/Mag
-    //useLSM9DS0AccelMag();
+    useLSM9DS0AccelMag();
 
 
   // // Bluefruit LE Module Operation
@@ -113,26 +117,26 @@ void loop()
   // SPI.endTransaction(); 
 
 
-  // // LSM Sensor Operation
-  // SPI.beginTransaction(settingsLSMSensor);
-  // digitalWrite(LSM9DS0_CSG, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
-  // digitalWrite(LSM9DS0_CSXM, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
-  // // Perform LSM sensor operations
-  // adaFruitLSM.printMenu();
-  // // Then wait for any serial data to come in:
-  // while (!Serial.available())
-  //   ;
-  // // Once serial data is received, call parseMenu to act on it:
-  // adaFruitLSM.parseMenu(Serial.read());
-  // digitalWrite(LSM9DS0_CSG, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
-  // digitalWrite(LSM9DS0_CSXM, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
-  // SPI.endTransaction();
+//   // LSM Sensor Operation
+//   SPI.beginTransaction(settingsLSMSensor);
+//   digitalWrite(LSM9DS0_CSG, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   digitalWrite(LSM9DS0_CSXM, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   // Perform LSM sensor operations
+//   adaFruitLSM.printMenu();
+//   // Then wait for any serial data to come in:
+//   while (!Serial.available())
+//     ;
+//   // Once serial data is received, call parseMenu to act on it:
+//   adaFruitLSM.parseMenu(Serial.read());
+//   digitalWrite(LSM9DS0_CSG, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   digitalWrite(LSM9DS0_CSXM, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   SPI.endTransaction();
 
- adaFruitLSM.printMenu();
-  // Then wait for any serial data to come in:
-  while (!Serial.available())
-    ;
-  // Once serial data is received, call parseMenu to act on it:
-  adaFruitLSM.parseMenu(Serial.read());
+//  adaFruitLSM.printMenu();
+//   // Then wait for any serial data to come in:
+//   while (!Serial.available())
+//     ;
+//   // Once serial data is received, call parseMenu to act on it:
+//   adaFruitLSM.parseMenu(Serial.read());
 }
 
