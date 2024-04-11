@@ -2,8 +2,6 @@
 #include <Adafruit_BluefruitLE_SPI.h>
 #include "TouchScreenTFT.h"
 #include <DataCard.h>
-#include <SPI.h>
-#include <Teensy_BMP180.h>
 
 // Setup for Bluetooth LE Friend
 #define BLUEFRUIT_SPI_CS               7
@@ -24,15 +22,6 @@ const bool WRITE_TO_SD = true;
 #define REMOTE_DETONATION_ARMED_STATE true
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
 
-
-// BMP180 - Barometer
-// SDA - 18
-// SCL - 19
-// GND - GND
-// VIN - 3.3V
-double baseline;
-double bmpValues[2]; //0: Temperature, 1:Pressure
-Teensy_BMP180 bmp180(&Wire);
 
 
 void showLSM9DS0Menu() {
