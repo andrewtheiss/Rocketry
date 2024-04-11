@@ -36,6 +36,7 @@ public:
     void setScale();
     void setRaw();
     void setODR();
+    void refreshForRead();
     float calcHeading(float hx, float hy, float hz);
     void printMenu();
     void parseMenu(char c);

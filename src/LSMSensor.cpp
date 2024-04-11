@@ -40,6 +40,14 @@ void LSMSensor::init() {
     }
 }
 
+void LSMSensor::refreshForRead() {
+  SPI.setDataMode(SPI_MODE3); // The LSM9DS0 typically operates in SPI Mode 3
+  SPI.setBitOrder(MSBFIRST);  // Default bit order for SPI
+  SPI.setClockDivider(SPI_CLOCK_DIV4); // Adjust as necessary for your microcontroller and sensor speed
+
+  uint16_t status = dof.begin();
+}
+
 void LSMSensor::printAccel()
 {
   // Only read from the accelerometer if the accel interrupts,

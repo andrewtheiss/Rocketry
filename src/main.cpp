@@ -92,6 +92,8 @@ void useLSM9DS0AccelMag() {
     SPI.beginTransaction(settingsLSMSensor);
     digitalWrite(LSM9DS0_CSXM, LOW); // Activate LSM9DS0 Accel/Mag
     // Perform LSM9DS0 Accel/Mag operations
+    
+    adaFruitLSM.refreshForRead();
     adaFruitLSM.printAccel();
     digitalWrite(LSM9DS0_CSXM, HIGH); // Deactivate LSM9DS0 Accel/Mag
     SPI.endTransaction();
@@ -100,13 +102,16 @@ void useLSM9DS0AccelMag() {
 void loop()
 {
     // Example of using the touchscreen
-    //useTouchScreen();
+    useTouchScreen();
     
     // Example of using the LSM9DS0 Gyro
     //useLSM9DS0Gyro();
     
     // Example of using the LSM9DS0 Accel/Mag
     useLSM9DS0AccelMag();
+
+  // sleep 0.1ms
+  delay(10);
 
 
   // // Bluefruit LE Module Operation
