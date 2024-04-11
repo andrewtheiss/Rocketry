@@ -17,6 +17,7 @@ LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) {
 // Function to format accelerometer data
 char* LSMSensor::getFormattedAcceleration() {
     static char buffer[128]; // Static buffer for data formatting
+    int floatGranularity = 3;
 
     dof.readAccel(); // Assume dof.readAccel() updates ax, ay, az
 
@@ -26,13 +27,13 @@ char* LSMSensor::getFormattedAcceleration() {
     int len = 0; // Variable to keep track of the buffer length
 
     // Manually convert integers to strings and concatenate to buffer
-    len += floatToString(ax_g, buffer + len, 5);
+    len += floatToString(ax_g, buffer + len, floatGranularity);
     buffer[len++] = ',';
     buffer[len++] = ' ';
-    len += floatToString(ay_g, buffer + len, 5);
+    len += floatToString(ay_g, buffer + len, floatGranularity);
     buffer[len++] = ',';
     buffer[len++] = ' ';
-    len += floatToString(az_g, buffer + len, 5);
+    len += floatToString(az_g, buffer + len, floatGranularity);
     buffer[len] = '\0'; // Null-terminate the string
     
     return buffer; // Return the static buffer
