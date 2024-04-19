@@ -2,8 +2,6 @@
 #include <Adafruit_BluefruitLE_SPI.h>
 #include "TouchScreenTFT.h"
 #include <DataCard.h>
-#include <SPI.h>
-#include <Teensy_BMP180.h>
 
 // Setup for Bluetooth LE Friend
 #define BLUEFRUIT_SPI_CS               7
@@ -23,17 +21,6 @@ const bool WRITE_TO_SD = true;
 #define REMOTE_DETONATION_SAFE_STATE false
 #define REMOTE_DETONATION_ARMED_STATE true
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
-
-
-// BMP180 - Barometer
-// SDA - 18
-// SCL - 19
-// GND - GND
-// VIN - 3.3V
-double baseline;
-double bmpValues[2]; //0: Temperature, 1:Pressure
-Teensy_BMP180 bmp180(&Wire);
-
 
 void showLSM9DS0Menu() {
 
@@ -87,10 +74,9 @@ void setup()
   Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
   digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
   pinMode(SOLENOID_PIN, OUTPUT); // Initialize the solenoid pin as an output
-
-  delay(10);
+  
   // Show the LSM9DS0 menu once
-  //showLSM9DS0Menu();
+  showLSM9DS0Menu();
 
 }
 
@@ -168,7 +154,7 @@ void useLSM9DS0AccelMag() {
 void loop()
 {
   // Example of using the touchscreen
-  //useTouchScreen();
+  useTouchScreen();
   
   // Example of using the LSM9DS0 Gyro
   //useLSM9DS0Gyro();
@@ -176,8 +162,8 @@ void loop()
   // Example of using the LSM9DS0 Accel/Mag
   useLSM9DS0AccelMag();
 
-  // sleep 0.005s
-  delay(5);
+  // sleep 0.1ms
+  delay(10);
 
   // // Bluefruit LE Module Operation
   // SPI.beginTransaction(settingsBluefruit);
