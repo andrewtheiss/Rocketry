@@ -1,7 +1,6 @@
 #include <LSMSensor.h>
 #include <Adafruit_BluefruitLE_SPI.h>
 #include "TouchScreenTFT.h"
-#include <DataCard.h>
 
 // Setup for Bluetooth LE Friend
 #define BLUEFRUIT_SPI_CS               7
@@ -10,7 +9,6 @@
 
 #define SOLENOID_PIN 21
 
-DataCard dataCard;
 TouchScreenTFT touchScreen;
 LSMSensor adaFruitLSM;
 SPISettings settingsTouchScreen(1000000, MSBFIRST, SPI_MODE0); // Adjust as necessary for touch screen
@@ -21,50 +19,8 @@ SPISettings settingsBluefruit(4000000, MSBFIRST, SPI_MODE0); // Adjust for Bluef
 #define REMOTE_DETONATION_SAFE_STATE false
 #define REMOTE_DETONATION_ARMED_STATE true
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
-
-void showLSM9DS0Menu() {
-
-  // LSM Sensor Operation
-  SPI.beginTransaction(settingsLSMSensor);
-  digitalWrite(LSM9DS0_CSG, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
-  digitalWrite(LSM9DS0_CSXM, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
-  // Perform LSM sensor operations
-  adaFruitLSM.printMenu();
-  // Then wait for any serial data to come in:
-  while (!Serial.available())
-    ;
-  // Once serial data is received, call parseMenu to act on it:
-  adaFruitLSM.parseMenu(Serial.read());
-  digitalWrite(LSM9DS0_CSG, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
-  digitalWrite(LSM9DS0_CSXM, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
-  SPI.endTransaction();
-
- adaFruitLSM.printMenu();
-  // Then wait for any serial data to come in:
-  while (!Serial.available())
-    ;
-  // Once serial data is received, call parseMenu to act on it:
-  adaFruitLSM.parseMenu(Serial.read());
-}
-
-void setupDataCard() {
-  
-    const char dataToWrite[] = "Hello, SD card!";
-    if (dataCard.writeData(dataToWrite)) {
-        Serial.println("Write successful");
-    } else {
-        Serial.println("Write failed");
-    }
-}
-
 void setup()
 {
-  dataCard.waitForSerialInput();
-  dataCard.init();
-  dataCard.waitForSerialInput();
-  setupDataCard();
-  dataCard.waitForSerialInput();
-
   // Setup code here
   pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
   pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
@@ -78,10 +34,6 @@ void setup()
   Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
   digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
   pinMode(SOLENOID_PIN, OUTPUT); // Initialize the solenoid pin as an output
-  
-  // Show the LSM9DS0 menu once
-  showLSM9DS0Menu();
-
 }
 
 void toggleSolenoid()
@@ -147,20 +99,20 @@ void useLSM9DS0AccelMag() {
     SPI.endTransaction();
 }
 
-
 void loop()
 {
-  // Example of using the touchscreen
-  useTouchScreen();
-  
-  // Example of using the LSM9DS0 Gyro
-  //useLSM9DS0Gyro();
-  
-  // Example of using the LSM9DS0 Accel/Mag
-  useLSM9DS0AccelMag();
+    // Example of using the touchscreen
+    useTouchScreen();
+    
+    // Example of using the LSM9DS0 Gyro
+    //useLSM9DS0Gyro();
+    
+    // Example of using the LSM9DS0 Accel/Mag
+    useLSM9DS0AccelMag();
 
   // sleep 0.1ms
   delay(10);
+
 
   // // Bluefruit LE Module Operation
   // SPI.beginTransaction(settingsBluefruit);
@@ -169,5 +121,27 @@ void loop()
   // digitalWrite(BLUEFRUIT_SPI_CS, HIGH);
   // SPI.endTransaction(); 
 
+
+//   // LSM Sensor Operation
+//   SPI.beginTransaction(settingsLSMSensor);
+//   digitalWrite(LSM9DS0_CSG, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   digitalWrite(LSM9DS0_CSXM, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   // Perform LSM sensor operations
+//   adaFruitLSM.printMenu();
+//   // Then wait for any serial data to come in:
+//   while (!Serial.available())
+//     ;
+//   // Once serial data is received, call parseMenu to act on it:
+//   adaFruitLSM.parseMenu(Serial.read());
+//   digitalWrite(LSM9DS0_CSG, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   digitalWrite(LSM9DS0_CSXM, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   SPI.endTransaction();
+
+//  adaFruitLSM.printMenu();
+//   // Then wait for any serial data to come in:
+//   while (!Serial.available())
+//     ;
+//   // Once serial data is received, call parseMenu to act on it:
+//   adaFruitLSM.parseMenu(Serial.read());
 }
 
