@@ -17,7 +17,7 @@ SPISettings settingsTouchScreen(1000000, MSBFIRST, SPI_MODE0); // Adjust as nece
 SPISettings settingsLSMSensor(1000000, MSBFIRST, SPI_MODE3); // Adjust for LSM sensor
 SPISettings settingsBluefruit(4000000, MSBFIRST, SPI_MODE0); // Adjust for Bluefruit LE module
 
-const bool WRITE_TO_SD = true;
+
 #define REMOTE_DETONATION_SAFE_STATE false
 #define REMOTE_DETONATION_ARMED_STATE true
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
@@ -59,6 +59,12 @@ void setupDataCard() {
 
 void setup()
 {
+  dataCard.waitForSerialInput();
+  dataCard.init();
+  dataCard.waitForSerialInput();
+  setupDataCard();
+  dataCard.waitForSerialInput();
+
   // Setup code here
   pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
   pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
@@ -68,8 +74,6 @@ void setup()
   touchScreen.init();
   adaFruitLSM.init();
   adaFruitLSM.setRaw();
-  dataCard.init();
-  setupDataCard();
 
   Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
   digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
@@ -135,16 +139,9 @@ void useLSM9DS0AccelMag() {
 
     SPI.beginTransaction(settingsLSMSensor);
     digitalWrite(LSM9DS0_CSXM, LOW); // Activate LSM9DS0 Accel/Mag
-    adaFruitLSM.refreshForRead();
     // Perform LSM9DS0 Accel/Mag operations
-
-    if (WRITE_TO_SD) {
-        const char* data = adaFruitLSM.getFormattedAcceleration();
-        if (!dataCard.writeData(data)) {
-            Serial.println("Failed to write data to SD card.");
-        }
-    }
     
+    adaFruitLSM.refreshForRead();
     adaFruitLSM.printAccel();
     digitalWrite(LSM9DS0_CSXM, HIGH); // Deactivate LSM9DS0 Accel/Mag
     SPI.endTransaction();
