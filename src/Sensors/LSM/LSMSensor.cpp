@@ -14,6 +14,10 @@ LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) {
 //     printRaw = true;
 // }
 
+void LSMSensor::loop() {
+  
+}
+
 
 void LSMSensor::init() {
  Serial.begin(9600); // Initialize serial communication
@@ -38,6 +42,7 @@ void LSMSensor::init() {
         Serial.print("LSM9DS0 initialization failed, WHO_AM_I's returned: 0x");
         Serial.println(status, HEX);
     }
+    setRaw();
 }
 
 void LSMSensor::refreshForRead() {

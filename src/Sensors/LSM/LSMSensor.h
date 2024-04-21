@@ -5,6 +5,7 @@
 #include <SPI.h> // Included for SFE_LSM9DS0 library
 #include <Wire.h>
 #include <SFE_LSM9DS0.h>
+#include "../DeviceRoutine.h"
 
 
 ///////////////////////
@@ -25,10 +26,11 @@ const byte DRDYG = 39;  // DRDYG tells us when gyro data is ready
 
 
 
-class LSMSensor {
+class LSMSensor : public DeviceRoutine {
 public:
     LSMSensor(); // Constructor
-    void init();
+    virtual void init() override;
+    virtual void loop() override;
     void printAccel();
     void printGyro();
     void printMag();
@@ -40,7 +42,13 @@ public:
     float calcHeading(float hx, float hy, float hz);
     void printMenu();
     void parseMenu(char c);
+    // virtual void init() override {
+    //     // Implementation of the init method for the LSM sensor
+    // }
 
+    // virtual void loop() override {
+    //     // Implementation of the loop method for the LSM sensor
+    // }
 private:
     LSM9DS0 dof;
     boolean printRaw;

@@ -1,24 +1,24 @@
-#include <LSMSensor.h>
-#include <Adafruit_BluefruitLE_SPI.h>
-#include "TouchScreenTFT.h"
-
-// Setup for Bluetooth LE Friend
-#define BLUEFRUIT_SPI_CS               7
-#define BLUEFRUIT_SPI_IRQ              6
-#define BLUEFRUIT_SPI_RST              3
+#include "Sensors/DeviceRoutine.h"
+#include "Sensors/LSM/LSMSensor.h"
+#include "Sensors/TouchScreenTFT/TouchScreenTFT.h"
+#include "Sensors/BluefriutLE/BluefruitLE.h"
 
 #define SOLENOID_PIN 21
 
 TouchScreenTFT touchScreen;
 LSMSensor adaFruitLSM;
+BluefruitLE ble;
 SPISettings settingsTouchScreen(1000000, MSBFIRST, SPI_MODE0); // Adjust as necessary for touch screen
 SPISettings settingsLSMSensor(1000000, MSBFIRST, SPI_MODE3); // Adjust for LSM sensor
 SPISettings settingsBluefruit(4000000, MSBFIRST, SPI_MODE0); // Adjust for Bluefruit LE module
 
+DeviceRoutine* devices[] = { &touchScreen, &adaFruitLSM, &ble };
+const int numDevices = sizeof(devices) / sizeof(devices[0]);
 
 #define REMOTE_DETONATION_SAFE_STATE false
 #define REMOTE_DETONATION_ARMED_STATE true
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
+
 void setup()
 {
   // Setup code here
@@ -27,13 +27,10 @@ void setup()
   pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
   pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
 
-  touchScreen.init();
-  adaFruitLSM.init();
-  adaFruitLSM.setRaw();
-
-  Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
-  digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
-  pinMode(SOLENOID_PIN, OUTPUT); // Initialize the solenoid pin as an output
+  for (int i = 0; i < numDevices; i++) {
+      devices[i]->init();
+      delay(10);
+  }
 }
 
 void toggleSolenoid()

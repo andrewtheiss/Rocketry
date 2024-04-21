@@ -19,6 +19,11 @@ void TouchScreenTFT::init() {
   tft.fillRect(BUTTON_4_YELLOW_X, BUTTON_4_YELLOW_Y, BUTTON_W, BUTTON_H, ILI9341_YELLOW);
 }
 
+void TouchScreenTFT::loop() {
+  // Check for touch events
+  checkTouch();
+}
+
 unsigned int TouchScreenTFT::checkTouch() {
   // Example raw touch values (minimum and maximum)
   int touchXmin = 300;  // Replace with your minimum x value

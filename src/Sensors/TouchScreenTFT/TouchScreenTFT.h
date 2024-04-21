@@ -1,6 +1,8 @@
 #ifndef TouchScreenTFT_h
 #define TouchScreenTFT_h
 
+#include "../DeviceRoutine.h"
+
 // For optimized ILI9341_t3 library
 #define TFT_DC      9
 #define TFT_CS      10
@@ -35,10 +37,11 @@
 #include <ILI9341_t3.h>
 #include <XPT2046_Touchscreen.h>
 
-class TouchScreenTFT {
+class TouchScreenTFT : public DeviceRoutine {
   public:
     TouchScreenTFT(); // Constructor
-    void init(); // Initialize the touchscreen and TFT display
+    virtual void init() override; // Initialize the touchscreen and TFT display
+    virtual void loop() override; // Loop method to be executed repeatedly
     unsigned int checkTouch(); // Check for touch and handle it
 
   private:
