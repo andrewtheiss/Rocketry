@@ -15,8 +15,8 @@ SPISettings settingsBluefruit(4000000, MSBFIRST, SPI_MODE0); // Adjust for Bluef
 DeviceRoutine* devices[] = { &touchScreen, &adaFruitLSM, &ble };
 const int numDevices = sizeof(devices) / sizeof(devices[0]);
 
-#define REMOTE_DETONATION_SAFE_STATE false
-#define REMOTE_DETONATION_ARMED_STATE true
+#define REMOTE_DETONATION_SAFE_STATE LOW
+#define REMOTE_DETONATION_ARMED_STATE HIGH
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
 
 void setup()
