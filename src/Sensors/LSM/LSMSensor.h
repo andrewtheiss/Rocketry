@@ -42,6 +42,7 @@ public:
     float calcHeading(float hx, float hy, float hz);
     void printMenu();
     void parseMenu(char c);
+    char * getFormattedAcceleration();
     // virtual void init() override {
     //     // Implementation of the init method for the LSM sensor
     // }
@@ -55,6 +56,8 @@ private:
     const byte INT1XM = 37;
     const byte INT2XM = 38;
     const byte DRDYG = 39;
+    int intToString(int, char*);
+    int floatToString(float, char*, int);
 };
 #endif // LSM_SENSOR_H  
 

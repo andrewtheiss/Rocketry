@@ -1,16 +1,26 @@
+#include "Data/DataCard/DataCard.h"
 #include "Sensors/DeviceRoutine.h"
 #include "Sensors/LSM/LSMSensor.h"
 #include "Sensors/TouchScreenTFT/TouchScreenTFT.h"
 #include "Sensors/BluefriutLE/BluefruitLE.h"
 
 #define SOLENOID_PIN 21
+#define DEBUG_LOG = true;
 
+#ifdef DEBUG_LOG
+  int DEBUG_COUNTER = 0;
+  
+#endif
+
+
+DataCard dataCard;
 TouchScreenTFT touchScreen;
 LSMSensor adaFruitLSM;
 BluefruitLE ble;
 SPISettings settingsTouchScreen(1000000, MSBFIRST, SPI_MODE0); // Adjust as necessary for touch screen
 SPISettings settingsLSMSensor(1000000, MSBFIRST, SPI_MODE3); // Adjust for LSM sensor
 SPISettings settingsBluefruit(4000000, MSBFIRST, SPI_MODE0); // Adjust for Bluefruit LE module
+const bool WRITE_TO_SD = true;
 
 DeviceRoutine* devices[] = { &touchScreen, &adaFruitLSM, &ble };
 const int numDevices = sizeof(devices) / sizeof(devices[0]);
@@ -19,8 +29,20 @@ const int numDevices = sizeof(devices) / sizeof(devices[0]);
 #define REMOTE_DETONATION_ARMED_STATE HIGH
 bool solenoidState = REMOTE_DETONATION_SAFE_STATE;
 
+void setupDataCard() {
+  
+    const char dataToWrite[] = "Hello, SD card!";
+    if (dataCard.writeData(dataToWrite)) {
+        Serial.println("Write successful");
+    } else {
+        Serial.println("Write failed");
+    }
+}
 void setup()
 {
+  delay(1000);
+  dataCard.init();
+  setupDataCard();
   // Setup code here
   pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
   pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
@@ -90,7 +112,15 @@ void useLSM9DS0AccelMag() {
     SPI.beginTransaction(settingsLSMSensor);
     digitalWrite(LSM9DS0_CSXM, LOW); // Activate LSM9DS0 Accel/Mag
     // Perform LSM9DS0 Accel/Mag operations
+    adaFruitLSM.refreshForRead();
     
+    if (WRITE_TO_SD) {
+        const char* data = adaFruitLSM.getFormattedAcceleration();
+        if (!dataCard.writeData(data)) {
+            Serial.println("Failed to write data to SD card.");
+        }
+    }
+
     adaFruitLSM.refreshForRead();
     adaFruitLSM.printAccel();
     digitalWrite(LSM9DS0_CSXM, HIGH); // Deactivate LSM9DS0 Accel/Mag
@@ -111,7 +141,13 @@ void loop()
   // sleep 0.1ms
   delay(10);
 
-
+  #ifdef DEBUG_LOG
+    if(DEBUG_COUNTER++ % 100 == 0) {
+      Serial.println("Debugging");
+      delay(1000);
+    }
+    
+  #endif
   // // Bluefruit LE Module Operation
   // SPI.beginTransaction(settingsBluefruit);
   // digitalWrite(BLUEFRUIT_SPI_CS, LOW); // Assuming BLUEFRUIT_CS is the CS pin for your Bluefruit module
