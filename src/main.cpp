@@ -74,8 +74,7 @@ void useTouchScreen() {
     digitalWrite(TOUCH_CS, LOW); // Activate touchscreen
     // Perform touchscreen operations
     // ================================================
-
-
+    
     unsigned int touchCommand = touchScreen.checkTouch();
     switch (touchCommand)
       {
@@ -89,6 +88,7 @@ void useTouchScreen() {
     // ================================================
     digitalWrite(TOUCH_CS, HIGH); // Deactivate touchscreen
     SPI.endTransaction();
+    
 }
 
 void useLSM9DS0Gyro() {
@@ -136,7 +136,7 @@ void loop()
     //useLSM9DS0Gyro();
     
     // Example of using the LSM9DS0 Accel/Mag
-    useLSM9DS0AccelMag();
+    //useLSM9DS0AccelMag();
 
   // sleep 0.1ms
   delay(10);

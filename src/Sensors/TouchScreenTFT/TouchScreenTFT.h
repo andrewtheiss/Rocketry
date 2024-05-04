@@ -43,10 +43,13 @@ class TouchScreenTFT : public DeviceRoutine {
     virtual void init() override; // Initialize the touchscreen and TFT display
     virtual void loop() override; // Loop method to be executed repeatedly
     unsigned int checkTouch(); // Check for touch and handle it
+    void redrawScreenSometimes(); // Redraw the screen
 
   private:
     ILI9341_t3 tft;
     XPT2046_Touchscreen touch;
+    int screenRedrawCounter = 0;
+    int screenRedrawInterval = 1000; // Redraw the screen every 1000 loops
     void button1Function();
     void button2Function();
     void button3Function();
