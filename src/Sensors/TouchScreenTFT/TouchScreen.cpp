@@ -8,24 +8,23 @@ TouchScreenTFT::TouchScreenTFT() : tft(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SC
 void TouchScreenTFT::init() {
   Serial.begin(9600);
   touch.begin();
+  Serial.begin(9600);
+  tft.begin();
   redrawScreenSometimes();
 }
 
 void TouchScreenTFT::redrawScreenSometimes() {
-  if (!(screenRedrawCounter % 100)) {
-    Serial.begin(9600);
-    tft.begin();
-    tft.setRotation(3);
+  Serial.println("Redrawing screen");
+  tft.setRotation(3);
 
-    // Draw initial button states
-    tft.fillScreen(ILI9341_BLACK);
-    tft.fillRect(BUTTON_1_RED_X, BUTTON_1_RED_Y, BUTTON_W, BUTTON_H, ILI9341_RED);
-    tft.fillRect(BUTTON_2_GREEN_X, BUTTON_2_GREEN_Y, BUTTON_W, BUTTON_H, ILI9341_GREEN);
-    tft.fillRect(BUTTON_3_BLUE_X, BUTTON_3_BLUE_Y, BUTTON_W, BUTTON_H, ILI9341_BLUE);
-    tft.fillRect(BUTTON_4_YELLOW_X, BUTTON_4_YELLOW_Y, BUTTON_W, BUTTON_H, ILI9341_YELLOW);
-    screenRedrawCounter = screenRedrawCounter % screenRedrawInterval;
-  }
-  screenRedrawCounter++;
+  tft.fillScreen(ILI9341_BLACK);
+  delay(100); // Short delay after clearing the screen
+
+  tft.fillRect(BUTTON_1_RED_X, BUTTON_1_RED_Y, BUTTON_W, BUTTON_H, ILI9341_RED);
+  tft.fillRect(BUTTON_2_GREEN_X, BUTTON_2_GREEN_Y, BUTTON_W, BUTTON_H, ILI9341_GREEN);
+  tft.fillRect(BUTTON_3_BLUE_X, BUTTON_3_BLUE_Y, BUTTON_W, BUTTON_H, ILI9341_BLUE);
+  tft.fillRect(BUTTON_4_YELLOW_X, BUTTON_4_YELLOW_Y, BUTTON_W, BUTTON_H, ILI9341_YELLOW);
+  delay(10); // Short delay after clearing the screen
 }
 
 void TouchScreenTFT::loop() {
@@ -34,9 +33,6 @@ void TouchScreenTFT::loop() {
 }
 
 unsigned int TouchScreenTFT::checkTouch() {
-  redrawScreenSometimes();
-
-
   // Example raw touch values (minimum and maximum)
   int touchXmin = 300;  // Replace with your minimum x value
   int touchXmax = 3834; // Replace with your maximum x value
@@ -70,6 +66,13 @@ unsigned int TouchScreenTFT::checkTouch() {
         button1Function();
         return 1;
       }
+    }    
+    // Check if within button boundaries and call respective functions
+    if (p.x >= BUTTON_4_YELLOW_X && p.x < (BUTTON_4_YELLOW_X + BUTTON_W)) {
+      if (p.y >= BUTTON_4_YELLOW_Y && p.y < (BUTTON_4_YELLOW_Y + BUTTON_H)) {
+        button4Function();
+        return 1;
+      }
     }
   }
     delay(100);
@@ -95,4 +98,5 @@ void TouchScreenTFT::button3Function() {
 
 void TouchScreenTFT::button4Function() {
   // Implementation
+  redrawScreenSometimes();
 }

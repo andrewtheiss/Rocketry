@@ -22,7 +22,7 @@ SPISettings settingsLSMSensor(1000000, MSBFIRST, SPI_MODE3); // Adjust for LSM s
 SPISettings settingsBluefruit(4000000, MSBFIRST, SPI_MODE0); // Adjust for Bluefruit LE module
 const bool WRITE_TO_SD = true;
 
-DeviceRoutine* devices[] = { &touchScreen, &adaFruitLSM, &ble };
+DeviceRoutine* devices[] = { &touchScreen };//, &adaFruitLSM, &ble };
 const int numDevices = sizeof(devices) / sizeof(devices[0]);
 
 #define REMOTE_DETONATION_SAFE_STATE LOW
@@ -40,10 +40,11 @@ void setupDataCard() {
 }
 void setup()
 {
-  delay(1000);
-  dataCard.init();
-  setupDataCard();
+  // delay(1000);
+  // dataCard.init();
+  // setupDataCard();
   // Setup code here
+  delay(100);
   pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
   pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
   pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
@@ -53,6 +54,10 @@ void setup()
       devices[i]->init();
       delay(10);
   }
+  pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
+  pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
+  pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
+  pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
   delay(100);
 }
 
@@ -70,11 +75,11 @@ void useTouchScreen() {
     digitalWrite(LSM9DS0_CSG, HIGH);
     digitalWrite(LSM9DS0_CSXM, HIGH);
 
-    SPI.beginTransaction(settingsTouchScreen);
     digitalWrite(TOUCH_CS, LOW); // Activate touchscreen
+    SPI.beginTransaction(settingsTouchScreen);
     // Perform touchscreen operations
     // ================================================
-    
+
     unsigned int touchCommand = touchScreen.checkTouch();
     switch (touchCommand)
       {
@@ -141,13 +146,13 @@ void loop()
   // sleep 0.1ms
   delay(10);
 
-  #ifdef DEBUG_LOG
-    if(DEBUG_COUNTER++ % 100 == 0) {
-      Serial.println("Debugging");
-      delay(1000);
-    }
+  // #ifdef DEBUG_LOG
+  //   if(DEBUG_COUNTER++ % 100 == 0) {
+  //     Serial.println("Debugging");
+  //     delay(1000);
+  //   }
     
-  #endif
+  // #endif
   // // Bluefruit LE Module Operation
   // SPI.beginTransaction(settingsBluefruit);
   // digitalWrite(BLUEFRUIT_SPI_CS, LOW); // Assuming BLUEFRUIT_CS is the CS pin for your Bluefruit module
