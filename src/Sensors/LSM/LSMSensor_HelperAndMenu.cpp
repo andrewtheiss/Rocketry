@@ -444,3 +444,28 @@ int LSMSensor::floatToString(float value, char* buffer, int precision) {
 
     return buffer - start; // Total length of the string
 }
+
+void LSMSensor::selectMenu() {
+  
+//   // LSM Sensor Operation
+//   SPI.beginTransaction(settingsLSMSensor);
+//   // digitalWrite(LSM9DS0_CSG, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   // digitalWrite(LSM9DS0_CSXM, LOW); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   // Perform LSM sensor operations
+//   adaFruitLSM.printMenu();
+//   // Then wait for any serial data to come in:
+//   while (!Serial.available())
+//     ;
+//   // Once serial data is received, call parseMenu to act on it:
+//   adaFruitLSM.parseMenu(Serial.read());
+//   // digitalWrite(LSM9DS0_CSG, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   // digitalWrite(LSM9DS0_CSXM, HIGH); // Assuming LSM_CS is the CS pin for your LSM sensor
+//   SPI.endTransaction();
+
+//  adaFruitLSM.printMenu();
+//   // Then wait for any serial data to come in:
+//   while (!Serial.available())
+//     ;
+//   // Once serial data is received, call parseMenu to act on it:
+//   adaFruitLSM.parseMenu(Serial.read());
+}

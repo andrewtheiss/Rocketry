@@ -10,10 +10,8 @@
 #define TFT_MOSI    11
 #define TFT_SCLK    13  // Cant change this
 #define TFT_MISO    12 
+#define TOUCH_IRQ   2   // Touch interrupt pin
 #define TOUCH_CS    8   // Chip select pin for the touchscreen
-
-// ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);
-// XPT2046_Touchscreen touch(TOUCH_CS);
 
 
 // Define button coordinates and sizes
@@ -44,11 +42,13 @@ class TouchScreenTFT : public DeviceRoutine {
     virtual void loop() override; // Loop method to be executed repeatedly
     unsigned int checkTouch(); // Check for touch and handle it
     void redrawScreenSometimes(); // Redraw the screen
+    void updateScreen();
 
   private:
     ILI9341_t3 tft;
     XPT2046_Touchscreen touch;
     int screenRedrawCounter = 0;
+    bool touched = false;
     int screenRedrawInterval = 1000; // Redraw the screen every 1000 loops
     void button1Function();
     void button2Function();

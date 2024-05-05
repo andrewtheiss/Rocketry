@@ -42,6 +42,7 @@ public:
     float calcHeading(float hx, float hy, float hz);
     void printMenu();
     void parseMenu(char c);
+    void selectMenu();
     char * getFormattedAcceleration();
     // virtual void init() override {
     //     // Implementation of the init method for the LSM sensor

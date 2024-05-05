@@ -14,6 +14,7 @@ LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) {
 //     printRaw = true;
 // }
 
+
 void LSMSensor::loop() {
   
 }
