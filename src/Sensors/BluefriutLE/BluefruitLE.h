@@ -2,18 +2,29 @@
 #ifndef BLUEFRUITLE_H
 #define BLUEFRUITLE_H
 
-
+#include <Arduino.h>
+#include "BluefruitConfig.h"
+#include <Adafruit_BLE.h>
 #include <Adafruit_BluefruitLE_SPI.h>
+#include "Adafruit_BluefruitLE_UART.h"
+#include <SPI.h>
+#include "./PacketParser.h"
 #include "../DeviceRoutine.h"
 
 // Setup for Bluetooth LE Friend
 #define BLUEFRUIT_SPI_CS               7
 #define BLUEFRUIT_SPI_IRQ              6
 #define BLUEFRUIT_SPI_RST              3
+#define BLE_READPACKET_TIMEOUT         500 // Timeout for reading packets in milliseconds
 
 class BluefruitLE : public DeviceRoutine {
     Adafruit_BluefruitLE_SPI ble; // Declare the BLE member variable
+    uint8_t packetBuffer[20]; // Buffer to store incoming packets
 
+    void error(const __FlashStringHelper* err) {
+      Serial.println(err);
+      while (1);
+    }
 public:
     // Constructor with member initializer list
     BluefruitLE() : ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
@@ -21,6 +32,16 @@ public:
     virtual void init() override; // Initialize the Bluefruit LE module
     virtual void loop() override; // Loop method to be executed repeatedly
     void checkBLE() {}; // Check for BLE messages and handle them
+    void getUserInput(char buffer[], uint8_t maxSize);
+    
 };
 
 #endif // BLUEFRUITLE_H
+
+
+// WARNING - must add delay in read/write
+// https://forum.pjrc.com/index.php?threads/teensy-3-6-vs-arduino-issues-with-adafruit-bluefruit-le-spi-friend.45440/page-2
+// #define SPI_CS_ENABLE()           digitalWrite(m_cs_pin, LOW)
+// #define SPI_CS_DISABLE()          digitalWrite(m_cs_pin, HIGH)
+// #define SPI_CS_ENABLE() digitalWrite(m_cs_pin, LOW);delayMicroseconds(1)
+// #define SPI_CS_DISABLE() delayMicroseconds(1);digitalWrite(m_cs_pin, HIGH)

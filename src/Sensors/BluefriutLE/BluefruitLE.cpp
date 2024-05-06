@@ -10,17 +10,53 @@
 #include "BluefruitLE.h"
 
 void BluefruitLE::init() {
+    Serial.begin(9600);
+    Serial.println(F("Initializing the Bluefruit LE module..."));
+
+    if ( !ble.begin(VERBOSE_MODE) )
+    {
+        error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
+    }
+    Serial.println( F("OK!") );
+
+
+    /* Disable command echo from Bluefruit */
+    ble.echo(false);
+
+    Serial.println("Requesting Bluefruit info:");
+    /* Print Bluefruit information */
+    ble.info();
+
 
 }
 
 void BluefruitLE::loop() {
+  // Display command prompt
+  Serial.print(F("AT > "));
 
-    // SPI.beginTransaction(settings);
-    // digitalWrite(LSM9DS0_CSXM, LOW); // Activate LSM9DS0 Accel/Mag
-    // // Perform LSM9DS0 Accel/Mag operations
-    
-    // adaFruitLSM.refreshForRead();
-    // adaFruitLSM.printAccel();
-    // digitalWrite(LSM9DS0_CSXM, HIGH); // Deactivate LSM9DS0 Accel/Mag
-    // SPI.endTransaction();
+  // Check for user input and echo it back if anything was found
+  char command[BUFSIZE+1];
+  getUserInput(command, BUFSIZE);
+
+  // Send command
+  ble.println(command);
+
+  // Check response status
+  ble.waitForOK();
+}
+
+void BluefruitLE::getUserInput(char buffer[], uint8_t maxSize)
+{
+  memset(buffer, 0, maxSize);
+  while( Serial.available() == 0 ) {
+    delay(1);
+  }
+
+  uint8_t count=0;
+
+  do
+  {
+    count += Serial.readBytes(buffer+count, maxSize);
+    delay(2);
+  } while( (count < maxSize) && !(Serial.available() == 0) );
 }

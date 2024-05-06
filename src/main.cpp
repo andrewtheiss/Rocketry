@@ -8,7 +8,7 @@
 #define SOLENOID_U7 29
 #define SOLENOID_U8 35
 #define DEBUG_LOG true
-#define SPICLOCK 40000000
+#define SPICLOCK 4000000
 
 #ifdef DEBUG_LOG
   int DEBUG_COUNTER = 0;
@@ -162,7 +162,7 @@ void loop()
     }
     
     // Example of using the LSM9DS0 Accel/Mag
-    useLSM9DS0AccelMag();
+    //useLSM9DS0AccelMag();
 
   // sleep 0.1ms
   delay(10);
@@ -174,17 +174,7 @@ void loop()
       delay(1000);
       timer.printElapsedTime();
       timer.printCurrentTime();
-    }
-    
+    }   
    #endif
-
-  // // Bluefruit LE Module Operation
-  // SPI.beginTransaction(settingsBluefruit);
-  // // digitalWrite(BLUEFRUIT_SPI_CS, LOW); // Assuming BLUEFRUIT_CS is the CS pin for your Bluefruit module
-  // // Perform Bluefruit operations
-  // // digitalWrite(BLUEFRUIT_SPI_CS, HIGH);
-  // SPI.endTransaction(); 
-
-
 }
 

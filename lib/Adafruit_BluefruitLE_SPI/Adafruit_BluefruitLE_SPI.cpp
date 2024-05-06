@@ -439,27 +439,32 @@ int Adafruit_BluefruitLE_SPI::read(void)
 {
   uint8_t ch;
 
-  // try to grab from buffer first...
   if (!m_rx_fifo.empty()) {
     m_rx_fifo.read(&ch);
+    Serial.print("FIFO read: "); Serial.println(ch, HEX);
     return (int)ch;
   }
 
-  if ( _mode == BLUEFRUIT_MODE_DATA )
-  {
-    // DATA Mode: query for BLE UART data
-    sendPacket(SDEP_CMDTYPE_BLE_UARTRX, NULL, 0, 0);
-
-    // Waiting to get response from Bluefruit
-    getResponse();
-  }else
-  {
-    // COMMAND Mode: Only read data from Bluefruit if IRQ is raised
-    if ( digitalRead(m_irq_pin) ) getResponse();
+  if (!digitalRead(m_irq_pin)) {
+    Serial.println("No IRQ");
+    return EOF;
   }
 
-  return m_rx_fifo.read(&ch) ? ((int) ch) : EOF;
+  if (_mode == BLUEFRUIT_MODE_DATA) {
+    Serial.println("Sending UART RX packet");
+    sendPacket(SDEP_CMDTYPE_BLE_UARTRX, NULL, 0, 0);
+  }
 
+  Serial.println("Getting response");
+  getResponse();
+
+  if (m_rx_fifo.read(&ch)) {
+    Serial.print("Response read: "); Serial.println(ch, HEX);
+    return (int) ch;
+  } else {
+    Serial.println("Read failed");
+    return EOF;
+  }
 }
 
 /******************************************************************************/
