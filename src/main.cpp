@@ -5,7 +5,8 @@
 #include "Sensors/TouchScreenTFT/TouchScreenTFT.h"
 #include "Sensors/BluefriutLE/BluefruitLE.h"
 
-#define SOLENOID_PIN 21
+#define SOLENOID_U7 29
+#define SOLENOID_U8 35
 #define DEBUG_LOG true
 #define SPICLOCK 40000000
 
@@ -47,6 +48,8 @@ void setupDataCard() {
 
 void setup()
 {
+  digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
+  digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
   dataCard.init();
   setupDataCard();
   // Setup code here
@@ -72,9 +75,14 @@ void setup()
 void toggleSolenoid()
 {
   Serial.println("Toggling solenoid");
-  digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_ARMED_STATE);
-  delay(5000);
-  digitalWrite(SOLENOID_PIN, REMOTE_DETONATION_SAFE_STATE);
+  digitalWrite(SOLENOID_U7, REMOTE_DETONATION_ARMED_STATE);
+  delay(2000);
+  digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
+
+  delay(500);
+  digitalWrite(SOLENOID_U8, REMOTE_DETONATION_ARMED_STATE);
+  delay(2000);
+  digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
   Serial.println("Toggling solenoid back off");
 }
 
@@ -162,6 +170,7 @@ void loop()
   #ifdef DEBUG_LOG
     if(DEBUG_COUNTER++ % 100 == 0) {
       Serial.println("Debugging");
+      toggleSolenoid();
       delay(1000);
       timer.printElapsedTime();
       timer.printCurrentTime();
