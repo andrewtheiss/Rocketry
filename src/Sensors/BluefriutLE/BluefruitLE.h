@@ -16,7 +16,9 @@
 #define BLUEFRUIT_SPI_IRQ              6
 #define BLUEFRUIT_SPI_RST              3
 #define BLE_READPACKET_TIMEOUT         500 // Timeout for reading packets in milliseconds
-
+#define BLUEFRUIT_SPI_SCK              13
+#define BLUEFRUIT_SPI_MISO             12
+#define BLUEFRUIT_SPI_MOSI             11
 class BluefruitLE : public DeviceRoutine {
     Adafruit_BluefruitLE_SPI ble; // Declare the BLE member variable
     uint8_t packetBuffer[20]; // Buffer to store incoming packets
@@ -27,8 +29,8 @@ class BluefruitLE : public DeviceRoutine {
     }
 public:
     // Constructor with member initializer list
-    BluefruitLE() : ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
-
+    // BluefruitLE() : ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
+    BluefruitLE() : ble(BLUEFRUIT_SPI_SCK,BLUEFRUIT_SPI_MISO, BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
     virtual void init() override; // Initialize the Bluefruit LE module
     virtual void loop() override; // Loop method to be executed repeatedly
     void checkBLE() {}; // Check for BLE messages and handle them

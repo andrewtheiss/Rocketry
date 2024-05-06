@@ -156,7 +156,7 @@ class Adafruit_BLE : public Adafruit_ATParser
 // DEBUG HELPER
 //--------------------------------------------------------------------+
 #ifndef DBG_ENABLE
-#define DBG_ENABLE      0
+#define DBG_ENABLE      1
 #endif
 
 #if DBG_ENABLE

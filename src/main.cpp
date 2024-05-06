@@ -8,7 +8,7 @@
 #define SOLENOID_U7 29
 #define SOLENOID_U8 35
 #define DEBUG_LOG true
-#define SPICLOCK 4000000
+#define SPICLOCK 600000
 
 #ifdef DEBUG_LOG
   int DEBUG_COUNTER = 0;
