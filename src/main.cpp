@@ -149,7 +149,10 @@ void useLSM9DS0AccelMag() {
 
 void loop()
 {
-    toggleSolenoid();
+    if (ble.getCurrentState() == BluefruitLE::FIRED) {
+      toggleSolenoid();
+      ble.setPrepareToArm();
+    }
     // Example of using the touchscreen
     //useTouchScreen();
     // Example of using the LSM9DS0 Gyro

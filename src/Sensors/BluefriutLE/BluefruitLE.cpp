@@ -86,6 +86,7 @@ void BluefruitLE::init()
     String arm = "00000110";
     uint8_t len = 0;
     Serial.println("Waiting to arm");
+    currentState = PREPARE_TO_ARM;
     while (!byteToBinary(len).equals(arm)) {
         /* Wait for new data to arrive */
         len = readPacket(&ble, BLE_READPACKET_TIMEOUT/50);
@@ -96,7 +97,8 @@ void BluefruitLE::init()
         // }
 
     }
-    Serial.println("Armed");
+    currentState = FIRED;
+    Serial.println("Armed and fired");
 }
 
 bool BluefruitLE::sendNVMReadCommand(uint32_t address, uint16_t length)
@@ -104,6 +106,10 @@ bool BluefruitLE::sendNVMReadCommand(uint32_t address, uint16_t length)
     char command[50];
     sprintf(command, "AT+NVMREADRAW=%lu,%u\r\n", address, length); // Create command string
     return ble.sendCommandCheckOK(command); // Send command and check for "OK"
+}
+
+int BluefruitLE::getCurrentState() {
+    return currentState;
 }
 
 void BluefruitLE::loop()

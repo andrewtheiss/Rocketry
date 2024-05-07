@@ -30,14 +30,30 @@ class BluefruitLE : public DeviceRoutine {
     String byteToBinary(uint8_t byte); 
     void printPacket(const uint8_t* buffer, uint8_t bufferSize);
     bool sendNVMReadCommand(uint32_t address, uint16_t length);
+
+
 public:
     // Constructor with member initializer list
     // BluefruitLE() : ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
-    BluefruitLE() : ble(BLUEFRUIT_SPI_SCK,BLUEFRUIT_SPI_MISO, BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
+    BluefruitLE() : ble(BLUEFRUIT_SPI_SCK,BLUEFRUIT_SPI_MISO, BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {
+      state currentState = PREPARE_TO_ARM;
+    }
     virtual void init() override; // Initialize the Bluefruit LE module
     virtual void loop() override; // Loop method to be executed repeatedly
     void checkBLE() {}; // Check for BLE messages and handle them
     int getUserInput(uint8_t buffer[], uint8_t maxSize);
+    enum state {
+      PREPARE_TO_ARM,
+      ARMED,
+      FIRED
+    };
+    int getCurrentState();
+    void setPrepareToArm() {
+      currentState = PREPARE_TO_ARM;
+    }
+    
+    private:
+      state currentState;
     
 };
 
