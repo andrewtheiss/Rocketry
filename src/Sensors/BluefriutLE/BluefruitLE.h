@@ -27,6 +27,9 @@ class BluefruitLE : public DeviceRoutine {
       Serial.println(err);
       while (1);
     }
+    String byteToBinary(uint8_t byte); 
+    void printPacket(const uint8_t* buffer, uint8_t bufferSize);
+    bool sendNVMReadCommand(uint32_t address, uint16_t length);
 public:
     // Constructor with member initializer list
     // BluefruitLE() : ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST) {}
@@ -34,7 +37,7 @@ public:
     virtual void init() override; // Initialize the Bluefruit LE module
     virtual void loop() override; // Loop method to be executed repeatedly
     void checkBLE() {}; // Check for BLE messages and handle them
-    void getUserInput(char buffer[], uint8_t maxSize);
+    int getUserInput(uint8_t buffer[], uint8_t maxSize);
     
 };
 

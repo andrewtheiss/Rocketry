@@ -76,13 +76,11 @@ void toggleSolenoid()
 {
   Serial.println("Toggling solenoid");
   digitalWrite(SOLENOID_U7, REMOTE_DETONATION_ARMED_STATE);
-  delay(2000);
-  digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
-
-  delay(500);
   digitalWrite(SOLENOID_U8, REMOTE_DETONATION_ARMED_STATE);
-  delay(2000);
+  delay(4000);
+  digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
   digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
+  delay(3000);
   Serial.println("Toggling solenoid back off");
 }
 
@@ -151,6 +149,7 @@ void useLSM9DS0AccelMag() {
 
 void loop()
 {
+    toggleSolenoid();
     // Example of using the touchscreen
     //useTouchScreen();
     // Example of using the LSM9DS0 Gyro
@@ -170,8 +169,8 @@ void loop()
   #ifdef DEBUG_LOG
     if(DEBUG_COUNTER++ % 100 == 0) {
       Serial.println("Debugging");
-      toggleSolenoid();
-      delay(1000);
+      //toggleSolenoid();
+      //delay(1000);
       timer.printElapsedTime();
       timer.printCurrentTime();
     }   

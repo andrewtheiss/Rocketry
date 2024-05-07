@@ -95,7 +95,7 @@ uint8_t readPacket(Adafruit_BLE *ble, uint16_t timeout)
       break;
     if ((packetbuffer[1] == 'L') && (replyidx == PACKET_LOCATION_LEN))
       break;
-
+    Serial.print(packetbuffer[1]);
     while (ble->available()) {
       char c =  ble->read();
       if (c == '!') {
