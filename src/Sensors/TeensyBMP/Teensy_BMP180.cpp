@@ -15,6 +15,7 @@
 void Teensy_BMP180::init() {
 	// Implementation of the init method for the BMP180 sensor
 	begin();
+	m_loggingEnabled = true;
 }
 
 void Teensy_BMP180::loop() {

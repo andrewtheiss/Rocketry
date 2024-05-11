@@ -3,7 +3,14 @@
 Rocket::Rocket() 
     : bmp180(&Wire), 
       solenoidState(REMOTE_DETONATION_SAFE_STATE), 
-      DEBUG_COUNTER(0) {}
+      DEBUG_COUNTER(0) {
+        devices = { 
+            &adaFruitLSM,     // LSM 9-axis gyro/accel/mag
+            //&touchScreen,   // Touchscreen (commented out)
+            &ble,             // Bluefruit LE
+            &bmp180           // Barometric pressure sensor
+        };
+      }
 
 void Rocket::setup() {
     Serial.begin(9600);
@@ -21,14 +28,9 @@ void Rocket::setup() {
 }
 
 void Rocket::initDevices() {
-    DeviceRoutine* devices[] = { 
-        &adaFruitLSM,     // LSM 9-axis gyro/accel/mag
-        &ble,             // Bluefruit LE
-        &bmp180           // Barometric pressure sensor
-    };
-    const int numDevices = sizeof(devices) / sizeof(devices[0]);
-    for (int i = 0; i < numDevices; i++) {
-        devices[i]->init();
+    for (DeviceRoutine* device : devices) {
+        device->init();
+        //device->setLoggingEnabled(true); // Enable logging for all devices
         delay(10);
     }
 }
@@ -99,15 +101,16 @@ void Rocket::loop() {
         toggleSolenoid();
         ble.setPrepareToArm();
     }
-    DeviceRoutine* devices[] = { 
-        &adaFruitLSM,     // LSM 9-axis gyro/accel/mag
-        //&touchScreen,     // Touchscreen
-        &ble,             // Bluefruit LE
-        &bmp180           // Barometric pressure sensor
-    };
-    const int numDevices = sizeof(devices) / sizeof(devices[0]);
-    for (int i = 0; i < numDevices; i++) {
-        devices[i]->loop();
+
+    for (DeviceRoutine* device : devices) {
+        device->loop();
+        if (device->isLoggingEnabled()) {
+            char data[100];
+            device->getData(data);
+            if (!dataCard.writeData(data)) {
+                Serial.printf("Failed to write data for device: %s\n", device->getName());
+            }
+        }
     }
     debug();
     delay(10);

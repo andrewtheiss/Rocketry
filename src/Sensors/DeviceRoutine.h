@@ -19,6 +19,9 @@ public:
     // Retrieve data in a standardized format.
     virtual void getData(char data[]) = 0;
     
+    // Get the name of the device
+    virtual const char* getName() = 0;
+
     // Enable the device routine.
     void enable() {
         m_enabled = true;
@@ -33,9 +36,16 @@ public:
     bool isEnabled() {
         return m_enabled;
     }
+
+    // Check if logging is enabled.
+    bool isLoggingEnabled() const {
+        return m_loggingEnabled;
+    }
+
     protected:
         SPISettings m_settings;
         bool m_enabled = true;
+        bool m_loggingEnabled = false; // Logging flag
 
 };
 

@@ -20,7 +20,8 @@ class Teensy_BMP180: public DeviceRoutine {
         virtual void init() override;
         virtual void loop() override;
 		virtual void getData(char data[]) override;
-
+		virtual const char* getName() override;
+		
 		Teensy_BMP180(TwoWire *hwWire){
 			WireSelected=hwWire;
 		} // base type

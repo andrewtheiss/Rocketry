@@ -1,7 +1,13 @@
 #include <SD.h>
+#include "../../Sensors/DeviceRoutine.h"
+#include <map>
+
 const char filename[] = "flightData/flightLog00000.txt";
 
 class DataCard {
+    private:
+        std::map<DeviceRoutine*, File> files;
+        File flightData;
 public:
     // Constructor
     DataCard() {
@@ -61,6 +67,38 @@ public:
         }
     }
     
+    // Initialize a file for a specific device routine
+    bool initFile(DeviceRoutine* device) {
+        char baseFilename[32];
+        char fileNumber[6] = "00000";  // Holds the number part of the filename
+        char extension[] = ".txt";
+        char fullFilename[50];  // Make sure this is large enough to hold the full filename
+
+        snprintf(baseFilename, sizeof(baseFilename), "flightData/%s_", device->getName());
+
+        // Find an unused filename
+        for (unsigned int i = 0; i < 100000; i++) {  // Adjust the limit as needed
+            sprintf(fileNumber, "%05u", i);  // Generate the next file number in the sequence
+            snprintf(fullFilename, sizeof(fullFilename), "%s%s%s", baseFilename, fileNumber, extension);
+
+            if (!SD.exists(fullFilename)) {
+                // If the file does not exist, use this filename
+                break;
+            }
+        }
+
+        File file = SD.open(fullFilename, FILE_WRITE);
+        if (!file) {
+            Serial.println("Failed to open the log file.");
+            return false;
+        } else {
+            Serial.printf("Log file %s opened for writing.\n", fullFilename);
+            files[device] = file;
+            return true;
+        }
+    }
+
+    
     // Write data to the specified file on the SD card
     bool writeData(const char* data) {
         if (!flightData) {
@@ -73,6 +111,22 @@ public:
         flightData.flush(); // Ensure data is written to the card
         return true;
     }
+    
+    // Write data from a device routine to its corresponding file
+    bool writeData(DeviceRoutine* device) {
+        char data[100];
+        device->getData(data);
+
+        File file = files[device];
+        if (!file) {
+            return false;
+        }
+
+        file.println(data); // Write data and a newline
+        file.flush(); // Ensure data is written to the card
+        return true;
+    }
+
         
     void waitForSerialInput() {
         Serial.println("Waiting for serial input...");
@@ -90,7 +144,5 @@ public:
         }
     }
 
-    private:
-        File flightData;
 
 };

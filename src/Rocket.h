@@ -1,6 +1,7 @@
 #ifndef ROCKET_H
 #define ROCKET_H
 
+#include <vector>
 #include "Data/Timer.h"
 #include "Data/DataCard/DataCard.h"
 #include "Sensors/DeviceRoutine.h"
@@ -8,7 +9,6 @@
 #include "Sensors/TouchScreenTFT/TouchScreenTFT.h"
 #include "Sensors/BluefriutLE/BluefruitLE.h"
 #include "Sensors/TeensyBMP/Teensy_BMP180.h"
-
 class Rocket {
 public:
     Rocket();
@@ -40,6 +40,10 @@ private:
     static const int SPICLOCK = 600000;
     static const int REMOTE_DETONATION_SAFE_STATE = LOW;
     static const int REMOTE_DETONATION_ARMED_STATE = HIGH;
+
+    public:
+    std::vector<DeviceRoutine*> devices; // Use std::vector to manage device pointers
+
 };
 
 #endif

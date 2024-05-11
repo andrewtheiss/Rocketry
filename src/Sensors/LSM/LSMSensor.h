@@ -32,6 +32,8 @@ public:
     virtual void init() override;
     virtual void loop() override;
     virtual void getData(char data[]) override;
+    virtual const char* getName() override;
+
     void printAccel();
     void printGyro();
     void printMag();
@@ -45,13 +47,7 @@ public:
     void parseMenu(char c);
     void selectMenu();
     char * getFormattedAcceleration();
-    // virtual void init() override {
-    //     // Implementation of the init method for the LSM sensor
-    // }
-
-    // virtual void loop() override {
-    //     // Implementation of the loop method for the LSM sensor
-    // }
+ 
 private:
     LSM9DS0 dof;
     boolean printRaw;

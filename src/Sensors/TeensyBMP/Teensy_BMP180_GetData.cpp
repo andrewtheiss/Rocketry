@@ -8,3 +8,6 @@ void Teensy_BMP180::getData(char data[]) {
         snprintf(data, 100, "Error reading sensor data");
     }
 }
+const char* Teensy_BMP180::getName() {
+    return "BMP180";
+}

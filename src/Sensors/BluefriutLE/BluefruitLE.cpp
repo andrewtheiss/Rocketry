@@ -14,6 +14,10 @@ void BluefruitLE::getData(char data[]) {
 
 }
 
+const char* BluefruitLE::getName() {
+    return "Bluefruit";
+}
+
 void BluefruitLE::init()
 {
     Serial.begin(115200);
