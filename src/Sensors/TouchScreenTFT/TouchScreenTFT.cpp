@@ -15,6 +15,7 @@ void TouchScreenTFT::init() {
 
 }
 
+
 void TouchScreenTFT::redrawScreenSometimes() {
   Serial.println("Redrawing screen");
 

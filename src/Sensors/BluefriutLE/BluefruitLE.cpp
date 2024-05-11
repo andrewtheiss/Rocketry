@@ -10,6 +10,10 @@
 #define MINIMUM_FIRMWARE_VERSION "0.6.6"
 #include "BluefruitLE.h"
 
+void BluefruitLE::getData(char data[]) {
+
+}
+
 void BluefruitLE::init()
 {
     Serial.begin(115200);

@@ -16,6 +16,9 @@ public:
     // of the device that needs to be executed continuously.
     virtual void loop() = 0;
 
+    // Retrieve data in a standardized format.
+    virtual void getData(char data[]) = 0;
+    
     // Enable the device routine.
     void enable() {
         m_enabled = true;

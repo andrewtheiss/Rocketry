@@ -31,6 +31,7 @@ public:
     LSMSensor(); // Constructor
     virtual void init() override;
     virtual void loop() override;
+    virtual void getData(char data[]) override;
     void printAccel();
     void printGyro();
     void printMag();

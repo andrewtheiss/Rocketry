@@ -40,6 +40,8 @@ class TouchScreenTFT : public DeviceRoutine {
     TouchScreenTFT(); // Constructor
     virtual void init() override; // Initialize the touchscreen and TFT display
     virtual void loop() override; // Loop method to be executed repeatedly
+    virtual void getData(char data[]) override;
+
     unsigned int checkTouch(); // Check for touch and handle it
     void redrawScreenSometimes(); // Redraw the screen
     void updateScreen();

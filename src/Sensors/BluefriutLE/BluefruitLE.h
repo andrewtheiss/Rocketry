@@ -40,6 +40,8 @@ public:
     }
     virtual void init() override; // Initialize the Bluefruit LE module
     virtual void loop() override; // Loop method to be executed repeatedly
+    virtual void getData(char data[]) override;
+
     void checkBLE() {}; // Check for BLE messages and handle them
     int getUserInput(uint8_t buffer[], uint8_t maxSize);
     enum state {

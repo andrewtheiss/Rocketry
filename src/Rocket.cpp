@@ -91,25 +91,6 @@ void Rocket::debug() {
         Serial.println("Debugging");
         timer.printElapsedTime();
         timer.printCurrentTime();
-        double temperature, pressure, altitude;
-        if (bmp180.startTemperature() && bmp180.getTemperature(temperature)) {
-            Serial.print("Temperature: ");
-            Serial.print(temperature);
-            Serial.println(" C");
-        } else {
-            Serial.println("Error reading temperature");
-        }
-        if (bmp180.startPressure() && bmp180.getPressure(pressure, temperature)) {
-            Serial.print("Pressure: ");
-            Serial.print(pressure);
-            Serial.println(" mb");
-            altitude = bmp180.altitude(pressure, 1013.25);
-            Serial.print("Altitude: ");
-            Serial.print(altitude);
-            Serial.println(" meters");
-        } else {
-            Serial.println("Error reading pressure");
-        }
     }
 }
 
@@ -120,6 +101,7 @@ void Rocket::loop() {
     }
     DeviceRoutine* devices[] = { 
         &adaFruitLSM,     // LSM 9-axis gyro/accel/mag
+        //&touchScreen,     // Touchscreen
         &ble,             // Bluefruit LE
         &bmp180           // Barometric pressure sensor
     };
