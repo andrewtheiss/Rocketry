@@ -20,8 +20,6 @@ private:
     void debug();
     void toggleSolenoid();
     void useTouchScreen();
-    void useLSM9DS0Gyro();
-    void useLSM9DS0AccelMag();
     
     Timer timer;
     DataCard dataCard;

@@ -60,26 +60,6 @@ void Rocket::useTouchScreen() {
     SPI.endTransaction();
 }
 
-void Rocket::useLSM9DS0Gyro() {
-    SPI.beginTransaction(SPISettings(SPICLOCK, MSBFIRST, SPI_MODE0));
-    adaFruitLSM.printGyro();
-    SPI.endTransaction();
-}
-
-void Rocket::useLSM9DS0AccelMag() {
-    SPI.beginTransaction(SPISettings(SPICLOCK, MSBFIRST, SPI_MODE0));
-    adaFruitLSM.refreshForRead();
-    if (WRITE_TO_SD) {
-        const char* data = adaFruitLSM.getFormattedAcceleration();
-        if (!dataCard.writeData(data)) {
-            Serial.println("Failed to write data to SD card.");
-        }
-    }
-    adaFruitLSM.refreshForRead();
-    adaFruitLSM.printAccel();
-    SPI.endTransaction();
-}
-
 void Rocket::debug() {
     if (DEBUG_LOG && DEBUG_COUNTER++ % 100 == 0) {
         Serial.println("Debugging");
