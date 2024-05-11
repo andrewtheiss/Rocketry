@@ -3,16 +3,19 @@
 Rocket::Rocket() 
     : bmp180(&Wire), 
       solenoidState(REMOTE_DETONATION_SAFE_STATE), 
-      DEBUG_COUNTER(0) {
+      DEBUG_COUNTER(0),
+      statusLED(&flight)  {
         devices = { 
             &adaFruitLSM,     // LSM 9-axis gyro/accel/mag
             //&touchScreen,   // Touchscreen (commented out)
             &ble,             // Bluefruit LE
             &bmp180           // Barometric pressure sensor
         };
+        flight.init(&statusLED);
       }
 
 void Rocket::setup() {
+    
     Serial.begin(9600);
     timer.start();
     dataCard.init(timer);

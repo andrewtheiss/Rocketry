@@ -2,6 +2,8 @@
 #define ROCKET_H
 
 #include <vector>
+#include "Flight/Flight.h"
+#include "Data/LEDs/StatusLED.h"
 #include "Data/Timer.h"
 #include "Data/DataCard/DataCard.h"
 #include "Sensors/DeviceRoutine.h"
@@ -14,13 +16,10 @@ public:
     Rocket();
     void setup();
     void loop();
-    
+
 private:
-    void initDevices();
-    void debug();
-    void toggleSolenoid();
-    void useTouchScreen();
-    
+    StatusLED statusLED;
+    Flight flight;
     Timer timer;
     DataCard dataCard;
     TouchScreenTFT touchScreen;
@@ -29,6 +28,7 @@ private:
     Teensy_BMP180 bmp180;
     bool solenoidState;
     int DEBUG_COUNTER;
+    std::vector<DeviceRoutine*> devices;
 
     const bool WRITE_TO_SD = true;
     static const int SOLENOID_U7 = 29;
@@ -38,8 +38,11 @@ private:
     static const int REMOTE_DETONATION_SAFE_STATE = LOW;
     static const int REMOTE_DETONATION_ARMED_STATE = HIGH;
 
+    void initDevices();
+    void debug();
+    void toggleSolenoid();
+    void useTouchScreen();
     public:
-    std::vector<DeviceRoutine*> devices; // Use std::vector to manage device pointers
 
 };
 
