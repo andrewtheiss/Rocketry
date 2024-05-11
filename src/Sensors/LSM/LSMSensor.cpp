@@ -32,10 +32,19 @@ char* LSMSensor::getFormattedAcceleration() {
 
     // Add this in
     float magnitude = sqrt(ax_g * ax_g + ay_g * ay_g + az_g *az_g);
+    buffer[len++] = 'A';
+    buffer[len++] = 'c';
+    buffer[len++] = 'c';
+    buffer[len++] = 'e';
+    buffer[len++] = 'l';
+    buffer[len++] = ':';
+    buffer[len++] = ' ';
     buffer[len++] = 'M';
     buffer[len++] = ':';
     buffer[len++] = ' ';
     len += floatToString(magnitude, buffer + len, 6);
+    buffer[len++] = ' ';
+    buffer[len++] = ' ';
 
     // Manually convert integers to strings and concatenate to buffer
     len += floatToString(ax_g, buffer + len, 5);

@@ -12,8 +12,8 @@ void LSMSensor::getData(char data[]) {
     float magnitude = sqrt(ax * ax + ay * ay + az * az);
 
     // Format the data string
-    snprintf(data, 100, "Accel: %s, Mag: %.2f g", formattedAcceleration, magnitude);
-    printAccel();
+    snprintf(data, 100, "%s", formattedAcceleration);
+    //printAccel();
 }
 
 const char* LSMSensor::getName() {

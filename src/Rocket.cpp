@@ -31,14 +31,9 @@ void Rocket::initDevices() {
     for (DeviceRoutine* device : devices) {
         device->init();
         //device->setLoggingEnabled(true); // Enable logging for all devices
-
-        if (device->isLoggingEnabled()) {
-            if (!dataCard.initFile(device)) {
-                Serial.printf("Failed to initialize file for device: %s\n", device->getName());
-            }
-        }
         delay(10);
     }
+    dataCard.initFiles(devices);
 }
 
 void Rocket::toggleSolenoid() {
@@ -102,9 +97,7 @@ void Rocket::loop() {
     for (DeviceRoutine* device : devices) {
         device->loop();
         if (device->isLoggingEnabled()) {
-            char data[100];
-            device->getData(data);
-            if (!dataCard.writeData(data)) {
+            if (!dataCard.writeData(device)) {
                 Serial.printf("Failed to write data for device: %s\n", device->getName());
             }
         }

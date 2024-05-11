@@ -8,11 +8,15 @@ const char filename[] = "flightData/flightLog00000.txt";
 class DataCard {
     private:
         std::map<DeviceRoutine*, File> files;
+        std::map<String, File> deviceLogs; // Map to store log files by device name
         File flightData;
         Timer m_timer;
+        char fileNumberStr[6]; // Store the file number string
 public:
     // Constructor
-    DataCard() {}
+    DataCard() {
+         strcpy(fileNumberStr, "00000");
+    }
 
     void checkDirectory() {
         char directory[] = "flightData"; // Directory to store the logs
@@ -39,7 +43,6 @@ public:
         Serial.println("Trying SD initialization...");
         checkDirectory();
         char baseFilename[] = "flightData/flightLog";
-        char fileNumber[6] = "00000";  // Holds the number part of the filename
         char extension[] = ".txt";
         char fullFilename[32];  // Make sure this is large enough to hold the full filename
 
@@ -52,8 +55,8 @@ public:
 
         // Find an unused filename
         for (unsigned int i = 0; i < 100000; i++) {  // Adjust the limit as needed
-            sprintf(fileNumber, "%05u", i);  // Generate the next file number in the sequence
-            snprintf(fullFilename, sizeof(fullFilename), "%s%s%s", baseFilename, fileNumber, extension);
+            sprintf(fileNumberStr, "%05u", i);  // Generate the next file number in the sequence
+            snprintf(fullFilename, sizeof(fullFilename), "%s%s%s", baseFilename, fileNumberStr, extension);
 
             if (!SD.exists(fullFilename)) {
                 // If the file does not exist, use this filename
@@ -69,25 +72,24 @@ public:
         }
     }
     
+    void initFiles(const std::vector<DeviceRoutine*>& devices) {
+        for (DeviceRoutine* device : devices) {
+            if (device->isLoggingEnabled()) {
+                if (!initFile(device)) {
+                    Serial.printf("Failed to initialize file for device: %s\n", device->getName());
+                }
+            }
+        }
+    }
+    
     // Initialize a file for a specific device routine
     bool initFile(DeviceRoutine* device) {
         char baseFilename[32];
-        char fileNumber[6] = "00000";  // Holds the number part of the filename
         char extension[] = ".txt";
         char fullFilename[50];  // Make sure this is large enough to hold the full filename
 
         snprintf(baseFilename, sizeof(baseFilename), "flightData/%s_", device->getName());
-
-        // Find an unused filename
-        for (unsigned int i = 0; i < 100000; i++) {  // Adjust the limit as needed
-            sprintf(fileNumber, "%05u", i);  // Generate the next file number in the sequence
-            snprintf(fullFilename, sizeof(fullFilename), "%s%s%s", baseFilename, fileNumber, extension);
-
-            if (!SD.exists(fullFilename)) {
-                // If the file does not exist, use this filename
-                break;
-            }
-        }
+        snprintf(fullFilename, sizeof(fullFilename), "%s%s%s", baseFilename, fileNumberStr, extension);
 
         File file = SD.open(fullFilename, FILE_WRITE);
         if (!file) {
@@ -96,6 +98,7 @@ public:
         } else {
             Serial.printf("Log file %s opened for writing.\n", fullFilename);
             files[device] = file;
+            deviceLogs[device->getName()] = file;
             return true;
         }
     }
@@ -118,13 +121,21 @@ public:
         char data[100];
         device->getData(data);
 
-        File file = files[device];
+        File file = deviceLogs[device->getName()];
         if (!file) {
             return false;
         }
 
-        flightData.printf("%.3f: %s\n", m_timer.elapsedMilliseconds() / 1000.0, data); // Write elapsed time in seconds and data
+        file.printf("%.3f: %s\n", m_timer.elapsedMilliseconds() / 1000.0, data); // Write elapsed time in seconds and data
         file.flush(); // Ensure data is written to the card
+
+        // Return the full file name
+        char fullFilename[50];
+        snprintf(fullFilename, sizeof(fullFilename), "flightData/%s_%s.txt", device->getName(), fileNumberStr);
+
+        // Debug
+        //Serial.printf("Data written to file: %s\n", fullFilename);
+        
         return true;
     }
 
@@ -142,6 +153,11 @@ public:
     ~DataCard() {
         if (flightData) {
             flightData.close();
+        }
+        for (auto& pair : deviceLogs) {
+            if (pair.second) {
+                pair.second.close();
+            }
         }
     }
 
