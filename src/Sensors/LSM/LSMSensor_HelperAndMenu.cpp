@@ -298,7 +298,7 @@ void LSMSensor::printAccel()
     dof.readAccel();
 
     Serial.print("A: ");
-    if (printRaw)
+    if (false) // Overroode this cause i never use
     {
       Serial.print(dof.ax);
       Serial.print(", ");
@@ -307,12 +307,16 @@ void LSMSensor::printAccel()
       Serial.println(dof.az);
     }
     else
-    {
+    {    
+      float magnitude = sqrt(dof.calcAccel(dof.ax) * dof.calcAccel(dof.ax) + dof.calcAccel(dof.ay) * dof.calcAccel(dof.ay) + dof.calcAccel(dof.az) *dof.calcAccel(dof.az));
+      Serial.print("Mag: " + String(magnitude) + " g, ");
       Serial.print(dof.calcAccel(dof.ax));
       Serial.print(", ");
       Serial.print(dof.calcAccel(dof.ay));
       Serial.print(", ");
       Serial.println(dof.calcAccel(dof.az));
+      
+    // Calculate the magnitude of the overall g-force
     }
   //}
 }

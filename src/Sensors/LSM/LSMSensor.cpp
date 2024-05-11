@@ -5,7 +5,7 @@
 LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) { 
     // A boolean to keep track of whether we're printing raw (ADC)
     // or calculated (g's, DPS, Gs) sensor data:
-    printRaw = true;
+    m_loggingEnabled = true;
 }
 
 // LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) { 
@@ -29,6 +29,13 @@ char* LSMSensor::getFormattedAcceleration() {
     int ax = dof.ax, ay = dof.ay, az = dof.az; // Assuming these are integer values
     float ax_g = dof.calcAccel(ax), ay_g = dof.calcAccel(ay), az_g = dof.calcAccel(az); // Assuming these are float values
     int len = 0; // Variable to keep track of the buffer length
+
+    // Add this in
+    float magnitude = sqrt(ax_g * ax_g + ay_g * ay_g + az_g *az_g);
+    buffer[len++] = 'M';
+    buffer[len++] = ':';
+    buffer[len++] = ' ';
+    len += floatToString(magnitude, buffer + len, 6);
 
     // Manually convert integers to strings and concatenate to buffer
     len += floatToString(ax_g, buffer + len, 5);
@@ -67,7 +74,6 @@ void LSMSensor::init() {
         Serial.print("LSM9DS0 initialization failed, WHO_AM_I's returned: 0x");
         Serial.println(status, HEX);
     }
-    setRaw();
 }
 
 void LSMSensor::refreshForRead() {

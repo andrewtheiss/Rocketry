@@ -1,6 +1,7 @@
 #include <SD.h>
 #include "../../Sensors/DeviceRoutine.h"
 #include <map>
+#include "../Timer.h"
 
 const char filename[] = "flightData/flightLog00000.txt";
 
@@ -8,11 +9,10 @@ class DataCard {
     private:
         std::map<DeviceRoutine*, File> files;
         File flightData;
+        Timer m_timer;
 public:
     // Constructor
-    DataCard() {
-        
-    }
+    DataCard() {}
 
     void checkDirectory() {
         char directory[] = "flightData"; // Directory to store the logs
@@ -33,7 +33,9 @@ public:
         }
     }
 
-    void init() {
+    void init(Timer& timer) {
+        m_timer = timer;
+
         Serial.println("Trying SD initialization...");
         checkDirectory();
         char baseFilename[] = "flightData/flightLog";
@@ -106,8 +108,7 @@ public:
             flightData = SD.open(filename, FILE_WRITE);
             if (!flightData) return false;
         }
-
-        flightData.println(data); // Write data and a newline
+        flightData.printf("%.3f: %s\n", m_timer.elapsedMilliseconds() / 1000.0, data); // Write elapsed time in seconds and data
         flightData.flush(); // Ensure data is written to the card
         return true;
     }
@@ -122,7 +123,7 @@ public:
             return false;
         }
 
-        file.println(data); // Write data and a newline
+        flightData.printf("%.3f: %s\n", m_timer.elapsedMilliseconds() / 1000.0, data); // Write elapsed time in seconds and data
         file.flush(); // Ensure data is written to the card
         return true;
     }

@@ -14,8 +14,8 @@ Rocket::Rocket()
 
 void Rocket::setup() {
     Serial.begin(9600);
-    dataCard.init();
     timer.start();
+    dataCard.init(timer);
     initDevices();
     digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
     digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
@@ -31,6 +31,12 @@ void Rocket::initDevices() {
     for (DeviceRoutine* device : devices) {
         device->init();
         //device->setLoggingEnabled(true); // Enable logging for all devices
+
+        if (device->isLoggingEnabled()) {
+            if (!dataCard.initFile(device)) {
+                Serial.printf("Failed to initialize file for device: %s\n", device->getName());
+            }
+        }
         delay(10);
     }
 }
@@ -77,15 +83,6 @@ void Rocket::useLSM9DS0AccelMag() {
     adaFruitLSM.refreshForRead();
     adaFruitLSM.printAccel();
     SPI.endTransaction();
-}
-
-void Rocket::writeDataToSD() {
-    const char dataToWrite[] = "Hello, SD card!";
-    if (dataCard.writeData(dataToWrite)) {
-        Serial.println("Write successful");
-    } else {
-        Serial.println("Write failed");
-    }
 }
 
 void Rocket::debug() {

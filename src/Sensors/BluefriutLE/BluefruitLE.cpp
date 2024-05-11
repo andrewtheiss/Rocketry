@@ -20,68 +20,68 @@ const char* BluefruitLE::getName() {
 
 void BluefruitLE::init()
 {
-    Serial.begin(115200);
-    Serial.println(F("Initializing the Bluefruit LE module..."));
-
-    if (!ble.begin(VERBOSE_MODE))
-    {
-        error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
-    }
-    Serial.println(F("OK!"));
-
-    /* Disable command echo from Bluefruit */
-    ble.echo(false);
-
-    Serial.println("Requesting Bluefruit info:");
-    /* Print Bluefruit information */
-    ble.info();
-
-    /* Change the device name to make it easier to find */
-    Serial.println(F("Setting device name to 'Bluefruit Keyboard': "));
-    if (!ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Bluefruit Keyboard")))
-    {
-        Serial.println("Could not set device name?");
-    }
-
-    /* Enable HID Service */
-    Serial.println(F("Enable HID Service (including Keyboard): "));
-    // if (ble.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION))
-    // {
-    //     if (!ble.sendCommandCheckOK(F("AT+BleHIDEn=On")))
-    //     {
-    //         Serial.println("Could not enable Keyboard HID");
-    //     }
-    // }
-    // else
-    // {
-        if (!ble.sendCommandCheckOK(F("AT+BleKeyboardEn=1")))
-        {
-            Serial.println("Could not enable Keyboard En");
-        }
-    //}
-    if (!ble.sendCommandCheckOK(F("AT+BLEKEYBOARD=http://www.adafruit.com\r\n")))
-    {
-        Serial.println("Could not send keyboard command?");
-    }
-
-    /* Add or remove service requires a reset */
-    Serial.println(F("Performing a SW reset (service changes require a reset): "));
-    if (!ble.reset())
-    {
-        Serial.println("Couldnt reset");
-    }
-
-    // // Set Bluefruit to DATA mode
-    // Serial.println( F("Switching to DATA mode!") );
-    // ble.setMode(BLUEFRUIT_MODE_DATA);
-
-    // /* Add or remove service requires a reset */
-    // Serial.println(F("Performing a SW reset (service changes require a reset): "));
-    // if (! ble.reset() ) {
-    //     Serial.println("Couldnt reset");
-    // }
     bool waitToArm = false;
     if (waitToArm) {
+        Serial.begin(115200);
+        Serial.println(F("Initializing the Bluefruit LE module..."));
+
+        if (!ble.begin(VERBOSE_MODE))
+        {
+            error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
+        }
+        Serial.println(F("OK!"));
+
+        /* Disable command echo from Bluefruit */
+        ble.echo(false);
+
+        Serial.println("Requesting Bluefruit info:");
+        /* Print Bluefruit information */
+        ble.info();
+
+        /* Change the device name to make it easier to find */
+        Serial.println(F("Setting device name to 'Bluefruit Keyboard': "));
+        if (!ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Bluefruit Keyboard")))
+        {
+            Serial.println("Could not set device name?");
+        }
+
+        /* Enable HID Service */
+        Serial.println(F("Enable HID Service (including Keyboard): "));
+        // if (ble.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION))
+        // {
+        //     if (!ble.sendCommandCheckOK(F("AT+BleHIDEn=On")))
+        //     {
+        //         Serial.println("Could not enable Keyboard HID");
+        //     }
+        // }
+        // else
+        // {
+            if (!ble.sendCommandCheckOK(F("AT+BleKeyboardEn=1")))
+            {
+                Serial.println("Could not enable Keyboard En");
+            }
+        //}
+        if (!ble.sendCommandCheckOK(F("AT+BLEKEYBOARD=http://www.adafruit.com\r\n")))
+        {
+            Serial.println("Could not send keyboard command?");
+        }
+
+        /* Add or remove service requires a reset */
+        Serial.println(F("Performing a SW reset (service changes require a reset): "));
+        if (!ble.reset())
+        {
+            Serial.println("Couldnt reset");
+        }
+
+        // // Set Bluefruit to DATA mode
+        // Serial.println( F("Switching to DATA mode!") );
+        // ble.setMode(BLUEFRUIT_MODE_DATA);
+
+        // /* Add or remove service requires a reset */
+        // Serial.println(F("Performing a SW reset (service changes require a reset): "));
+        // if (! ble.reset() ) {
+        //     Serial.println("Couldnt reset");
+        // }
         // Set Bluefruit to DATA mode
         Serial.println( F("Switching to DATA mode!") );
         ble.setMode(BLUEFRUIT_MODE_DATA);

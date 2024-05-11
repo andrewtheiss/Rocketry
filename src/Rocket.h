@@ -18,7 +18,6 @@ public:
 private:
     void initDevices();
     void debug();
-    void writeDataToSD();
     void toggleSolenoid();
     void useTouchScreen();
     void useLSM9DS0Gyro();
