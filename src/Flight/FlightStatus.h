@@ -2,11 +2,14 @@
 #define FLIGHTSTATUS_H
 
 enum FlightStatus {
+
     IDLE,
-    LAUNCH_PREP,
+    DATA_RECORDING,
     LAUNCHED,
     IN_FLIGHT,
-    LANDED
+    LANDED,
+    ERROR,
+    ERROR_NO_SD
 };
 
 #endif

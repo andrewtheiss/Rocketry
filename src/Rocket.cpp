@@ -15,10 +15,16 @@ Rocket::Rocket()
       }
 
 void Rocket::setup() {
-    
+    delay(100);
+    Serial.print("Initializing rocket");
     Serial.begin(9600);
     timer.start();
-    dataCard.init(timer);
+    
+    // Check to make sure data is being written
+    if (!dataCard.init(timer)) {
+        flight.setStatus(ERROR_NO_SD);
+    };
+
     initDevices();
     digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
     digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
@@ -27,7 +33,9 @@ void Rocket::setup() {
     pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
     pinMode(TFT_CS, OUTPUT); // Touchscreen CS pin
     pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
+    
     delay(100);
+    flight.updateStatusIfOK(DATA_RECORDING);
 }
 
 void Rocket::initDevices() {

@@ -36,20 +36,22 @@ public:
             }
         }
     }
-
-    void init(Timer& timer) {
+    
+    bool init(Timer& timer) {
         m_timer = timer;
 
         Serial.println("Trying SD initialization...");
+        
+        if (!SD.begin(BUILTIN_SDCARD)) {
+            Serial.println("The SD card failed to initialize.");
+            return false;
+        }
+
         checkDirectory();
+
         char baseFilename[] = "flightData/flightLog";
         char extension[] = ".txt";
         char fullFilename[32];  // Make sure this is large enough to hold the full filename
-
-        if (!SD.begin(BUILTIN_SDCARD)) {
-            Serial.println("The SD card failed to initialize.");
-            while (1);
-        }
 
         Serial.println("The SD card has been initialized.");
 
@@ -67,10 +69,14 @@ public:
         flightData = SD.open(fullFilename, FILE_WRITE);
         if (!flightData) {
             Serial.println("Failed to open the log file.");
+            return false;
         } else {
             Serial.printf("Log file %s opened for writing.\n", fullFilename);
         }
+
+        return true;
     }
+
     
     void initFiles(const std::vector<DeviceRoutine*>& devices) {
         for (DeviceRoutine* device : devices) {

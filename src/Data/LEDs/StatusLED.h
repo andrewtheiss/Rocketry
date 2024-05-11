@@ -7,9 +7,8 @@
 class Flight;
 
 // How many LEDs in your strip?
-#define NUM_LEDS 10
-#define DATA_PIN 35
-
+#define NUM_LEDS 20
+#define DATA_PIN 17
 
 class StatusLED {
 private:

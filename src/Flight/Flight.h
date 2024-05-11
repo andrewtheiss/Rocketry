@@ -18,9 +18,13 @@ public:
 
     void setStatus(FlightStatus status);
 
+    void updateStatusIfOK(FlightStatus status);
+
     FlightStatus getStatus() const {
         return currentStatus;
     }
+
+    void updateFlight();
 };
 
 #endif
