@@ -45,7 +45,7 @@ public:
     enum state {
       PREPARE_TO_ARM,
       ARMED,
-      FIRED
+      FIRE
     };
     int getCurrentState();
     void setPrepareToArm() {

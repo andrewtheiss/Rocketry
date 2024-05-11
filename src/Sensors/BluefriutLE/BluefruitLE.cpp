@@ -72,7 +72,8 @@ void BluefruitLE::init()
     // if (! ble.reset() ) {
     //     Serial.println("Couldnt reset");
     // }
-    
+    bool waitToArm = false;
+    if (waitToArm) {
         // Set Bluefruit to DATA mode
         Serial.println( F("Switching to DATA mode!") );
         ble.setMode(BLUEFRUIT_MODE_DATA);
@@ -83,22 +84,22 @@ void BluefruitLE::init()
         {
             Serial.println("Couldnt reset");
         }
-    String arm = "00000110";
-    uint8_t len = 0;
-    Serial.println("Waiting to arm");
-    currentState = PREPARE_TO_ARM;
-    while (!byteToBinary(len).equals(arm)) {
-        /* Wait for new data to arrive */
-        len = readPacket(&ble, BLE_READPACKET_TIMEOUT/50);
-        // if (len == 0) {
-        //     //Serial.println("No data received or error in receiving data");
-        // } else {
-        //     Serial.println("DATA received or error in receiving data: " +byteToBinary(len));
-        // }
-
+        String arm = "00000110";
+        uint8_t len = 0;
+        Serial.println("Waiting to arm");
+        currentState = PREPARE_TO_ARM;
+        while (!byteToBinary(len).equals(arm)) {
+            /* Wait for new data to arrive */
+            len = readPacket(&ble, BLE_READPACKET_TIMEOUT/50);
+            // if (len == 0) {
+            //     //Serial.println("No data received or error in receiving data");
+            // } else {
+            //     Serial.println("DATA received or error in receiving data: " +byteToBinary(len));
+            // }
+        }
+        currentState = FIRE;
+        Serial.println("Armed and fired");
     }
-    currentState = FIRED;
-    Serial.println("Armed and fired");
 }
 
 bool BluefruitLE::sendNVMReadCommand(uint32_t address, uint16_t length)

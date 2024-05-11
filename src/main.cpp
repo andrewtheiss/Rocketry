@@ -4,6 +4,7 @@
 #include "Sensors/LSM/LSMSensor.h"
 #include "Sensors/TouchScreenTFT/TouchScreenTFT.h"
 #include "Sensors/BluefriutLE/BluefruitLE.h"
+#include "Sensors/TeensyBMP/Teensy_BMP180.h"
 
 #define SOLENOID_U7 29
 #define SOLENOID_U8 35
@@ -23,6 +24,7 @@ DataCard dataCard;
 TouchScreenTFT touchScreen;
 LSMSensor adaFruitLSM;
 BluefruitLE ble;
+Teensy_BMP180 bmp180(&Wire);
 
 // Device routine settings
 SPISettings settingsTouchScreen(SPICLOCK, MSBFIRST, SPI_MODE0); // Adjust as necessary for touch screen
@@ -30,7 +32,12 @@ SPISettings settingsLSMSensor(SPICLOCK, MSBFIRST, SPI_MODE0); // Adjust for LSM 
 SPISettings settingsBluefruit(SPICLOCK, MSBFIRST, SPI_MODE0); // Adjust for Bluefruit LE module
 const bool WRITE_TO_SD = true;
 
-DeviceRoutine* devices[] = { &touchScreen,  &adaFruitLSM, &ble };
+DeviceRoutine* devices[] = { 
+  //&touchScreen,     // Touchscreen
+  &adaFruitLSM,     // LSM 9-axis gyro/accel/mag
+  &ble,             // Bluefruit LE
+  &bmp180           // Barometric pressure sensor
+};
 const int numDevices = sizeof(devices) / sizeof(devices[0]);
 
 #define REMOTE_DETONATION_SAFE_STATE LOW
@@ -46,30 +53,31 @@ void setupDataCard() {
     }
 }
 
-void setup()
-{
+void setPinState() {
   digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
   digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
-  dataCard.init();
-  setupDataCard();
-  // Setup code here
-  pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
-  pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
-  pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
-  pinMode(TFT_CS, OUTPUT); // Touchscreen CS pin
-  pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
-
-  for (int i = 0; i < numDevices; i++) {
-      devices[i]->init();
-      delay(10);
-  }
   pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
   pinMode(LSM9DS0_CSXM, OUTPUT); // Accel/Mag CS pin
   pinMode(TOUCH_CS, OUTPUT); // Touchscreen CS pin
   pinMode(TFT_CS, OUTPUT); // Touchscreen CS pin
   pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
   delay(100);
+}
+
+void setup()
+{
+  // Setup SD Card
+  dataCard.init();
+  setupDataCard();
+
+  // Setup devices
   timer.start();
+  for (int i = 0; i < numDevices; i++) {
+      devices[i]->init();
+      delay(10);
+  }
+  
+  setPinState();
 }
 
 void toggleSolenoid()
@@ -149,7 +157,7 @@ void useLSM9DS0AccelMag() {
 
 void loop()
 {
-    if (ble.getCurrentState() == BluefruitLE::FIRED) {
+    if (ble.getCurrentState() == BluefruitLE::FIRE) {
       toggleSolenoid();
       ble.setPrepareToArm();
     }
@@ -176,6 +184,39 @@ void loop()
       //delay(1000);
       timer.printElapsedTime();
       timer.printCurrentTime();
+      double temperature, pressure, altitude;
+
+      // Start and retrieve temperature
+      if (bmp180.startTemperature()) {
+        if (bmp180.getTemperature(temperature)) {
+          Serial.print("Temperature: ");
+          Serial.print(temperature);
+          Serial.println(" C");
+        } else {
+          Serial.println("Error reading temperature");
+        }
+      } else {
+        Serial.println("Error starting temperature measurement");
+      }
+
+      // Start and retrieve pressure
+      if (bmp180.startPressure()) {
+        if (bmp180.getPressure(pressure, temperature)) {
+          Serial.print("Pressure: ");
+          Serial.print(pressure);
+          Serial.println(" mb");
+
+          // Calculate altitude
+          altitude = bmp180.altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
+          Serial.print("Altitude: ");
+          Serial.print(altitude);
+          Serial.println(" meters");
+        } else {
+          Serial.println("Error reading pressure");
+        }
+      } else {
+        Serial.println("Error starting pressure measurement");
+      }
     }   
    #endif
 }
