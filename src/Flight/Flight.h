@@ -23,8 +23,8 @@ private:
     
     // Flight logic variables
     static const int SAMPLE_SIZE = 10;
-    static const float LAUNCH_G_THRESHOLD = 2.5;
-    static const float LAUNCH_HEIGHT_THRESHOLD = 1500;
+    static const float LAUNCH_G_THRESHOLD = 0.2;
+    static const float LAUNCH_HEIGHT_THRESHOLD = 2.0f;
 
     float elevationSamples[SAMPLE_SIZE];
     float accelerationSamples[SAMPLE_SIZE];
@@ -33,6 +33,10 @@ private:
     float averageAcceleration;
     unsigned long lastSampleTime;
     unsigned long launchDetectionStartTime;
+
+    // Launch checks
+    bool highGDetected = false;
+    bool elevationGainDetected = false;
 
     
     // Before flight

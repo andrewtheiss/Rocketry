@@ -24,6 +24,21 @@ void LSMSensor::loop() {
   
 }
 
+float LSMSensor::getAccelerationMagnitude() { 
+  
+  refreshForRead();
+  dof.readAccel(); // Assume dof.readAccel() updates ax, ay, az
+
+  // Directly format into the buffer without using sprintf, std::to_chars, etc.
+  int ax = dof.ax, ay = dof.ay, az = dof.az; // Assuming these are integer values
+  float ax_g = dof.calcAccel(ax), ay_g = dof.calcAccel(ay), az_g = dof.calcAccel(az); // Assuming these are float values
+  int len = 0; // Variable to keep track of the buffer length
+
+  // Add this in
+  float magnitude = sqrt(ax_g * ax_g + ay_g * ay_g + az_g *az_g);
+  return magnitude;
+}
+
 // Function to format accelerometer data
 char* LSMSensor::getFormattedAcceleration() {
     static char buffer[128]; // Static buffer for data formatting

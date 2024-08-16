@@ -47,6 +47,7 @@ public:
     void parseMenu(char c);
     void selectMenu();
     char * getFormattedAcceleration();
+    float getAccelerationMagnitude();
  
 private:
     LSM9DS0 dof;
