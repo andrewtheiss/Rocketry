@@ -21,6 +21,7 @@ void Flight::init(StatusLED* statusLED, const std::vector<DeviceRoutine*>& devic
     m_pStatusLED = statusLED;
     m_devices = devices;
     m_pTimer = timer;
+    lastSampleTime = m_pTimer->elapsedMilliseconds();
     setStatus(IDLE);
 }
 

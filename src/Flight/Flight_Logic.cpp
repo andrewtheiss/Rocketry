@@ -4,19 +4,24 @@
 void Flight::LoopDataRecording() {
     
     // Add another datapoint to the sensors:
-    // if (millis() - lastSampleTime >= 500) {  // Sample every 1/2 second
-    //     lastSampleTime = millis();
+    uint32_t currentTime = m_pTimer->elapsedMilliseconds();
+    if (currentTime - lastSampleTime >= 500) {  // Sample every 1/2 second
+        lastSampleTime = currentTime;
         
-    //     float currentElevation = m_bmpSensor->readAltitude();
-    //     float accelX, accelY, accelZ;
-    //     m_lsmSensor->getAcceleration(accelX, accelY, accelZ);
-    //     float currentAcceleration = sqrt(accelX*accelX + accelY*accelY + accelZ*accelZ);
+        double temperature, pressure, latestAltitude;
+        if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
+            float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
+            elevationSamples[sampleIndex] = currentElevation;
+        }
+
+        // float accelX, accelY, accelZ;
+        // m_lsmSensor->getAcceleration(accelX, accelY, accelZ);
+        // float currentAcceleration = sqrt(accelX*accelX + accelY*accelY + accelZ*accelZ);
         
-    //     elevationSamples[sampleIndex] = currentElevation;
-    //     accelerationSamples[sampleIndex] = currentAcceleration;
+        // accelerationSamples[sampleIndex] = currentAcceleration;
         
-    //     sampleIndex++;
-    // }
+        sampleIndex++;
+    }
 
 
     if (sampleIndex >= SAMPLE_SIZE) {
@@ -48,7 +53,18 @@ void Flight::getSensorIdleAverages() {
 }
 
 void Flight::LoopIdleLaunchReady() {
-    // float currentElevation = m_bmpSensor->readAltitude();
+    
+    double temperature, pressure, latestAltitude;
+    if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
+        float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
+        
+        if (currentElevation - averageElevation > LAUNCH_HEIGHT_THRESHOLD) {
+            setStatus(IN_FLIGHT_ASCENT);
+            Serial.println("Launch detected by altitude!");
+            return;
+        }
+
+    }
     // float accelX, accelY, accelZ;
     // m_lsmSensor->getAcceleration(accelX, accelY, accelZ);
     // float currentAcceleration = sqrt(accelX*accelX + accelY*accelY + accelZ*accelZ);
@@ -65,11 +81,7 @@ void Flight::LoopIdleLaunchReady() {
     //     launchDetectionStartTime = 0;
     // }
     
-    // if (currentElevation - averageElevation > LAUNCH_HEIGHT_THRESHOLD) {
-    //     setStatus(IN_FLIGHT_ASCENT);
-    //     Serial.println("Launch detected by altitude!");
-    //     return;
-    // }
+
 }
 
 void Flight::LoopAscent() {
