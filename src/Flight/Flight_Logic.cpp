@@ -1,6 +1,7 @@
 #include "Flight.h"
 #include <Arduino.h>
 
+
 void Flight::LoopDataRecording() {
     
     // Add another datapoint to the sensors:
@@ -65,49 +66,52 @@ void Flight::getSensorIdleAverages() {
 
 void Flight::LoopIdleLaunchReady() {
     
-    double temperature, pressure, latestAltitude;
-    if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
-        float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
-        
-            Serial.print("Current Elevation: ");
-            Serial.println(currentElevation);
-            Serial.print("Average Elevation: ");
-            Serial.println(averageElevation);
-        if (currentElevation - averageElevation > LAUNCH_HEIGHT_THRESHOLD) {
-            Serial.println("Launch detected by altitude!");
-            // print current and average elevation
-            Serial.print("Current Elevation: ");
-            Serial.println(currentElevation);
-            Serial.print("Average Elevation: ");
-            Serial.println(averageElevation);
-            return;
+    double temperature, pressure;
+    if (!elevationGainDetected) {
+        if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
+            float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
+            
+            if (currentElevation - averageElevation > LAUNCH_HEIGHT_THRESHOLD) {
+                elevationGainDetected = true;
+                Serial.println("Launch detected by altitude!");
+                // print current and average elevation
+                Serial.print("Current Elevation: ");
+                Serial.println(currentElevation);
+                Serial.print("Average Elevation: ");
+                Serial.println(averageElevation);
+            }
         }
-
     }
     
-    float currentAccelerationMagnitude = m_lsmSensor->getAccelerationMagnitude();
-    if (currentAccelerationMagnitude > (averageAcceleration + LAUNCH_G_THRESHOLD)) {
-        if (launchDetectionStartTime == 0) {
-            launchDetectionStartTime = m_pTimer->elapsedMilliseconds();
-            // print high g detected and start time
-            Serial.println("High G detected");
-            Serial.print(currentAccelerationMagnitude);
-            Serial.print("   - Start Time: ");
-            Serial.println(launchDetectionStartTime);
+    
+    if (!highGDetected) {
+        float currentAccelerationMagnitude = m_lsmSensor->getAccelerationMagnitude();
+        if (currentAccelerationMagnitude > (averageAcceleration + LAUNCH_G_THRESHOLD)) {
+            if (launchDetectionStartTime == 0) {
+                launchDetectionStartTime = m_pTimer->elapsedMilliseconds();
+                // print high g detected and start time
+                Serial.println("High G detected");
+                Serial.print(currentAccelerationMagnitude);
+                Serial.print("   - Start Time: ");
+                Serial.println(launchDetectionStartTime);
 
-        } else if (m_pTimer->elapsedMilliseconds() - launchDetectionStartTime >= 1000) {  // 1 second of consecutive high G force
-            // print start time and launch detected by acceleration
-            Serial.print("Start Time: ");
-            Serial.println(launchDetectionStartTime);
-            Serial.print("TimeNow: ");  
-            Serial.println(m_pTimer->elapsedMilliseconds());
-            Serial.print("acceleration: ");
-            Serial.println(currentAccelerationMagnitude);
-            Serial.println("Launch detected by acceleration!");
-            return;
+            } else if (m_pTimer->elapsedMilliseconds() - launchDetectionStartTime >= 1000) {  // 1 second of consecutive high G force
+                highGDetected = true;
+                // print start time and launch detected by acceleration
+                Serial.print("Start Time: ");
+                Serial.println(launchDetectionStartTime);
+                Serial.print("TimeNow: ");  
+                Serial.println(m_pTimer->elapsedMilliseconds());
+                Serial.print("acceleration: ");
+                Serial.println(currentAccelerationMagnitude);
+                Serial.println("Launch detected by acceleration!");
+            }
+        } else {
+            Serial.println("High G ended");
+            Serial.print(currentAccelerationMagnitude);
+            Serial.print("   - End Time: ");
+            launchDetectionStartTime = 0;
         }
-    } else {
-        launchDetectionStartTime = 0;
     }
     
     if (highGDetected && elevationGainDetected) {
@@ -116,6 +120,19 @@ void Flight::LoopIdleLaunchReady() {
 }
 
 void Flight::LoopAscent() {
+
+    // Wait to check for height and g-force
+    if (!timerForApogeeFinished) {
+        timerForApogeeCheckToBegin = m_pTimer->elapsedMilliseconds();
+        if (timerForApogeeCheckToBegin >= 3000) {
+            timerForApogeeFinished = true;
+        }
+    } else {
+
+        // Check for apogee
+    }
+
+
     // Placeholder function for ascent phase
     //Serial.println("In ascent phase");
 }

@@ -23,8 +23,8 @@ private:
     
     // Flight logic variables
     static const int SAMPLE_SIZE = 10;
-    static const float LAUNCH_G_THRESHOLD = 0.2;
-    static const float LAUNCH_HEIGHT_THRESHOLD = 2.0f;
+    const float LAUNCH_G_THRESHOLD = 0.5f;  // 1 g
+    const float LAUNCH_HEIGHT_THRESHOLD = 200.0f;  // 200 meters unit we launch
 
     float elevationSamples[SAMPLE_SIZE];
     float accelerationSamples[SAMPLE_SIZE];
@@ -38,6 +38,9 @@ private:
     bool highGDetected = false;
     bool elevationGainDetected = false;
 
+    // Flight apogee variables 
+    uint32_t timerForApogeeCheckToBegin = 0;
+    bool timerForApogeeFinished = false;
     
     // Before flight
     void getSensorIdleAverages();
