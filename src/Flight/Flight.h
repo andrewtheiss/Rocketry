@@ -6,6 +6,7 @@
 #include "../Data/LEDs/StatusLED.h"
 #include "../Sensors/LSM/LSMSensor.h"
 #include "../Sensors/TeensyBMP/Teensy_BMP180.h"
+#include "../Data/Timer.h"
 #include <vector>
 
 class StatusLED;
@@ -17,11 +18,37 @@ private:
     std::vector<DeviceRoutine*> m_devices;
     LSMSensor* m_lsmSensor;
     Teensy_BMP180* m_bmpSensor;
+    Timer* m_pTimer;
+
+    
+    // Flight logic variables
+    static const int SAMPLE_SIZE = 10;
+    static const float LAUNCH_G_THRESHOLD = 2.5;
+    static const float LAUNCH_HEIGHT_THRESHOLD = 1500;
+
+    float elevationSamples[SAMPLE_SIZE];
+    float accelerationSamples[SAMPLE_SIZE];
+    int sampleIndex;
+    float averageElevation;
+    float averageAcceleration;
+    unsigned long lastSampleTime;
+    unsigned long launchDetectionStartTime;
+
+    
+    // Before flight
+    void getSensorIdleAverages();
+    void LoopDataRecording();
+    void LoopIdleLaunchReady();
+
+    // In-flight methods (implemented in Flight_Logic.cpp)
+    void LoopAscent();
+    void LoopAfterApogee();
+    void LoopFlightComplete();
 
 public:
-    Flight() : currentStatus(IDLE), m_pStatusLED(nullptr), m_lsmSensor(nullptr), m_bmpSensor(nullptr) {}
+    Flight();
 
-    void init(StatusLED* statusLED, const std::vector<DeviceRoutine*>& devices);
+    void init(StatusLED* statusLED, const std::vector<DeviceRoutine*>& devices, Timer* timer);
     void setStatus(FlightStatus status);
     void updateStatusIfOK(FlightStatus status);
     FlightStatus getStatus() const { return currentStatus; }

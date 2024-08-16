@@ -11,7 +11,7 @@ Rocket::Rocket()
             &ble,             // Bluefruit LE
             &bmp180           // Barometric pressure sensor
         };
-        flight.init(&statusLED, devices);
+        flight.init(&statusLED, devices, &timer);
       }
 
 void Rocket::setup() {
