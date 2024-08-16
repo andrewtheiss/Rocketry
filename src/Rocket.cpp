@@ -26,6 +26,7 @@ void Rocket::setup() {
     };
 
     initDevices();
+    initFlight();
     digitalWrite(SOLENOID_U7, REMOTE_DETONATION_SAFE_STATE);
     digitalWrite(SOLENOID_U8, REMOTE_DETONATION_SAFE_STATE);
     pinMode(LSM9DS0_CSG, OUTPUT); // Gyro CS pin
@@ -36,6 +37,10 @@ void Rocket::setup() {
     
     delay(100);
     flight.updateStatusIfOK(DATA_RECORDING);
+}
+
+void Rocket::initFlight() {
+    dataCard.initFile(&flight);
 }
 
 void Rocket::initDevices() {
@@ -93,6 +98,10 @@ void Rocket::loop() {
             }
         }
     }
+
+    // Update the flight
+    flight.loop();
+
     debug();
     delay(10);
 }

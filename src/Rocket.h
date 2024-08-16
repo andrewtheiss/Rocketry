@@ -39,6 +39,7 @@ private:
     static const int REMOTE_DETONATION_ARMED_STATE = HIGH;
 
     void initDevices();
+    void initFlight();
     void debug();
     void toggleSolenoid();
     void useTouchScreen();

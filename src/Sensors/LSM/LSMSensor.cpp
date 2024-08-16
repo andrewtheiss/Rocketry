@@ -5,6 +5,11 @@
 LSMSensor::LSMSensor() : dof(MODE_SPI, LSM9DS0_CSG, LSM9DS0_CSXM) { 
     // A boolean to keep track of whether we're printing raw (ADC)
     // or calculated (g's, DPS, Gs) sensor data:
+    
+    // Default max is 2G for the accelerometer, we want 8
+    dof.setAccelScale(dof.A_SCALE_8G);
+
+
     m_loggingEnabled = true;
 }
 
