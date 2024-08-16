@@ -69,6 +69,10 @@ void Flight::LoopIdleLaunchReady() {
     if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
         float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
         
+            Serial.print("Current Elevation: ");
+            Serial.println(currentElevation);
+            Serial.print("Average Elevation: ");
+            Serial.println(averageElevation);
         if (currentElevation - averageElevation > LAUNCH_HEIGHT_THRESHOLD) {
             Serial.println("Launch detected by altitude!");
             // print current and average elevation
