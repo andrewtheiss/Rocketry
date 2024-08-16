@@ -9,19 +9,33 @@ void Flight::setStatus(FlightStatus status) {
     }
 }
 
-void Flight::init(StatusLED* statusLED) {
+void Flight::init(StatusLED* statusLED, const std::vector<DeviceRoutine*>& devices) {
     m_pStatusLED = statusLED;
+    m_devices = devices;
     setStatus(IDLE);
 }
 
 void Flight::init() {
-    // Should not be implemented
+    setStatus(ERROR);
 }
 
 void Flight::loop() {
     // If accel is greater than x amount for a certain time, change status to in flight
     // Placeholder for future flight logic
+    // Implement flight logic here
+    // You can now use m_lsmSensor and m_bmpSensor to access sensor data
+    // For example:
+    if (m_lsmSensor && m_bmpSensor) {
+        // Read acceleration data
+        float accelX, accelY, accelZ;
+        //m_lsmSensor->getAcceleration(accelX, accelY, accelZ);
 
+        // Read altitude data
+        //float altitude = m_bmpSensor->readAltitude();
+
+        // Use this data to make decisions about the flight status
+        // ...
+    }
     /*
     4161.522: Accel: M: 2.229197  1.99951, -0.86389, -0.47430
 4161.571: Accel: M: 2.107912  1.99951, -0.66546, -0.04901
@@ -54,4 +68,8 @@ void Flight::updateStatusIfOK(FlightStatus status) {
 
 const char* Flight::getName() {
     return "Flight";
+}
+
+void Flight::getData(char data[]) {
+    sprintf(data, "Flight Status: %d", currentStatus);
 }

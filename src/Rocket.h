@@ -43,6 +43,8 @@ private:
     void debug();
     void toggleSolenoid();
     void useTouchScreen();
+    DeviceRoutine* lookupDeviceByName(const char* name);
+    
     public:
 
 };

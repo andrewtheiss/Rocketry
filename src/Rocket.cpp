@@ -11,7 +11,7 @@ Rocket::Rocket()
             &ble,             // Bluefruit LE
             &bmp180           // Barometric pressure sensor
         };
-        flight.init(&statusLED);
+        flight.init(&statusLED, devices);
       }
 
 void Rocket::setup() {
@@ -41,6 +41,18 @@ void Rocket::setup() {
 
 void Rocket::initFlight() {
     dataCard.initFile(&flight);
+    
+    // Set up LSM and BMP references in Flight
+    DeviceRoutine* lsmDevice = lookupDeviceByName("LSMAccel");
+    DeviceRoutine* bmpDevice = lookupDeviceByName("BMP180");
+    
+    if (lsmDevice && bmpDevice) {
+        flight.setLSMSensor(static_cast<LSMSensor*>(lsmDevice));
+        flight.setBMPSensor(static_cast<Teensy_BMP180*>(bmpDevice));
+    } else {
+        Serial.println("Error: Could not find LSM or BMP180 sensor");
+        flight.setStatus(ERROR);
+    }
 }
 
 void Rocket::initDevices() {
@@ -104,4 +116,13 @@ void Rocket::loop() {
 
     debug();
     delay(10);
+}
+
+DeviceRoutine* Rocket::lookupDeviceByName(const char* name) {
+    for (DeviceRoutine* device : devices) {
+        if (strcmp(device->getName(), name) == 0) {
+            return device;
+        }
+    }
+    return nullptr;
 }
