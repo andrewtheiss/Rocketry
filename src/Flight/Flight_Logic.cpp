@@ -53,11 +53,11 @@ void Flight::getSensorIdleAverages() {
     
     // Verify the averages
     // TODO -log this instead of print
-    Serial.println("Idle averages calculated. Ready for launch.");
-    Serial.print("Average Elevation: ");
-    Serial.println(averageStartElevation);
-    Serial.print("Average Acceleration: ");
-    Serial.println(averageStartAcceleration);
+    // Serial.println("Idle averages calculated. Ready for launch.");
+    // Serial.print("Average Elevation: ");
+    // Serial.println(averageStartElevation);
+    // Serial.print("Average Acceleration: ");
+    // Serial.println(averageStartAcceleration);
     
     // Sensor Average Complete!
     // Move to CALIBRATED_LAUNCH_READY state
@@ -73,12 +73,12 @@ void Flight::LoopIdleLaunchReady() {
             
             if (currentElevation - averageStartElevation > LAUNCH_HEIGHT_THRESHOLD) {
                 elevationGainDetected = true;
-                Serial.println("Launch detected by altitude!");
-                // print current and average elevation
-                Serial.print("Current Elevation: ");
-                Serial.println(currentElevation);
-                Serial.print("Average Elevation: ");
-                Serial.println(averageStartElevation);
+                // Serial.println("Launch detected by altitude!");
+                // // print current and average elevation
+                // Serial.print("Current Elevation: ");
+                // Serial.println(currentElevation);
+                // Serial.print("Average Elevation: ");
+                // Serial.println(averageStartElevation);
             }
         }
     }
@@ -90,26 +90,26 @@ void Flight::LoopIdleLaunchReady() {
             if (launchDetectionStartTime == 0) {
                 launchDetectionStartTime = m_pTimer->elapsedMilliseconds();
                 // print high g detected and start time
-                Serial.println("High G detected");
-                Serial.print(currentAccelerationMagnitude);
-                Serial.print("   - Start Time: ");
-                Serial.println(launchDetectionStartTime);
+                // Serial.println("High G detected");
+                // Serial.print(currentAccelerationMagnitude);
+                // Serial.print("   - Start Time: ");
+                // Serial.println(launchDetectionStartTime);
 
             } else if (m_pTimer->elapsedMilliseconds() - launchDetectionStartTime >= 1000) {  // 1 second of consecutive high G force
                 highGDetected = true;
                 // print start time and launch detected by acceleration
-                Serial.print("Start Time: ");
-                Serial.println(launchDetectionStartTime);
-                Serial.print("TimeNow: ");  
-                Serial.println(m_pTimer->elapsedMilliseconds());
-                Serial.print("acceleration: ");
-                Serial.println(currentAccelerationMagnitude);
-                Serial.println("Launch detected by acceleration!");
+                // Serial.print("Start Time: ");
+                // Serial.println(launchDetectionStartTime);
+                // Serial.print("TimeNow: ");  
+                // Serial.println(m_pTimer->elapsedMilliseconds());
+                // Serial.print("acceleration: ");
+                // Serial.println(currentAccelerationMagnitude);
+                // Serial.println("Launch detected by acceleration!");
             }
         } else {
-            Serial.println("High G ended");
-            Serial.print(currentAccelerationMagnitude);
-            Serial.print("   - End Time: ");
+            // Serial.println("High G ended");
+            // Serial.print(currentAccelerationMagnitude);
+            // Serial.print("   - End Time: ");
             launchDetectionStartTime = 0;
         }
     }
@@ -162,14 +162,14 @@ void Flight::LoopAscent() {
             }
 
             // Print debug information
-            Serial.print("Current Elevation: ");
-            Serial.print(currentElevation);
-            Serial.print(" WMA: ");
-            Serial.print(wma);
-            Serial.print(" Max Elevation: ");
-            Serial.print(maxElevation);
-            Serial.print(" Difference: ");
-            Serial.println(maxElevation - wma);
+            // Serial.print("Current Elevation: ");
+            // Serial.print(currentElevation);
+            // Serial.print(" WMA: ");
+            // Serial.print(wma);
+            // Serial.print(" Max Elevation: ");
+            // Serial.print(maxElevation);
+            // Serial.print(" Difference: ");
+            // Serial.println(maxElevation - wma);
 
             // Move to the next position
             current_index = (current_index + 1) % size;
