@@ -35,13 +35,27 @@ private:
     unsigned long launchDetectionStartTime;
 
     // Launch checks
-    bool highGDetected = false;
-    bool elevationGainDetected = false;
+    bool highGDetected = true;
+    bool elevationGainDetected = true;
 
     // Flight apogee variables 
     uint32_t timerForApogeeCheckToBegin = 0;
     bool timerForApogeeFinished = false;
     
+    // Apogee test variables
+    const int size = 50;
+    float values[50] = {0};
+    float sum = 0.0f;
+    float weight_sum = 0.0f;
+    int current_index = 0;
+    int count = 0;
+    float maxElevation = -INFINITY;
+    const float APOGEE_THRESHOLD = 5.0; // 5 meter decrease threshold
+    const float G_FORCE_THRESHOLD = 0.1; // 0.1G threshold
+    const int APOGEE_G_FORCE_COUNT = 15; // 15 consecutive low G-force readings for apogee
+    int lowGForceCount = 0;
+
+
     // Before flight
     void getSensorIdleAverages();
     void LoopDataRecording();

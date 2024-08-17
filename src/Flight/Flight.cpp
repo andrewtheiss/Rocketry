@@ -67,6 +67,21 @@ const char* Flight::getName() {
     return "Flight";
 }
 
+const char* flightStatusToString(FlightStatus status) {
+    switch (status) {
+        case IDLE: return "IDLE";
+        case IDLE_LAUNCH_READY: return "IDLE_LAUNCH_READY";
+        case DATA_RECORDING: return "DATA_RECORDING";
+        case IN_FLIGHT_ASCENT: return "IN_FLIGHT_ASCENT";
+        case IN_FLIGHT_APOGEE: return "IN_FLIGHT_APOGEE";
+        case IN_FLIGHT_MAIN_CHUTE_DEPLOYED: return "IN_FLIGHT_MAIN_CHUTE_DEPLOYED";
+        case LANDED: return "LANDED";
+        case ERROR: return "ERROR";
+        case ERROR_NO_SD: return "ERROR_NO_SD";
+        default: return "UNKNOWN";
+    }
+}
+
 void Flight::getData(char data[]) {
-    sprintf(data, "Flight Status: %d", currentStatus);
+    snprintf(data, 100, "Flight Status: %s", flightStatusToString(currentStatus));
 }

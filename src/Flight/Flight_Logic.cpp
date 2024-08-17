@@ -128,13 +128,66 @@ void Flight::LoopAscent() {
             timerForApogeeFinished = true;
         }
     } else {
+        double temperature, pressure;
+        if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
+            float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
+            
 
-        // Check for apogee
+            // Subtract the oldest value if the buffer is full
+            if (count == size) {
+                sum -= values[current_index] * (count - size + 1);
+                weight_sum -= count - size + 1;
+            } else {
+                count++;
+            }
+
+            // Add the new value
+            values[current_index] = currentElevation;
+            sum += currentElevation * count;
+            weight_sum += count;
+
+            // Calculate weighted moving average
+            float wma = sum / weight_sum;
+
+
+            // Update max elevation
+            if (wma > maxElevation) {
+                maxElevation = wma;
+            }
+
+            // Check for apogee
+            if (maxElevation - wma > APOGEE_THRESHOLD) {
+                setStatus(IN_FLIGHT_APOGEE);
+                return; // Exit the function if apogee is detected
+            }
+
+            // Print debug information
+            Serial.print("Current Elevation: ");
+            Serial.print(currentElevation);
+            Serial.print(" WMA: ");
+            Serial.print(wma);
+            Serial.print(" Max Elevation: ");
+            Serial.print(maxElevation);
+            Serial.print(" Difference: ");
+            Serial.println(maxElevation - wma);
+
+            // Move to the next position
+            current_index = (current_index + 1) % size;
+        }
     }
 
-
-    // Placeholder function for ascent phase
-    //Serial.println("In ascent phase");
+    // Check for apogee using G-force
+    // G-force check
+    float gForceMagnitude =  m_lsmSensor->getAccelerationMagnitude();
+    if (gForceMagnitude < G_FORCE_THRESHOLD) {
+        lowGForceCount++;
+        if (lowGForceCount >= APOGEE_G_FORCE_COUNT) {
+            setStatus(IN_FLIGHT_APOGEE);
+            return; // Exit the function if apogee is detected
+        }
+    } else {
+        lowGForceCount = 0;
+    }
 }
 
 void Flight::LoopAfterApogee() {
