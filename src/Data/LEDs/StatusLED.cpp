@@ -6,11 +6,11 @@ void StatusLED::updateLEDs() {
         case IDLE:
             fill_solid(leds, NUM_LEDS, CRGB::Yellow);
             break;
-        case CALIBRATED_LAUNCH_READY:
-            fill_solid(leds, NUM_LEDS, CRGB::White);
-            break;
         case SENSOR_CALIBRATION_AND_SD_WRITE:
             fill_solid(leds, NUM_LEDS, CRGB::Green);
+            break;
+        case CALIBRATED_LAUNCH_READY:
+            fill_solid(leds, NUM_LEDS, CRGB::White);
             break;
         case IN_FLIGHT_ASCENT:
             fill_solid(leds, NUM_LEDS, CRGB::Blue);
