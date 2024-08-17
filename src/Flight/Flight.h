@@ -29,8 +29,8 @@ private:
     float elevationSamples[SAMPLE_SIZE];
     float accelerationSamples[SAMPLE_SIZE];
     int sampleIndex;
-    float averageElevation;
-    float averageAcceleration;
+    float averageStartElevation;
+    float averageStartAcceleration;
     unsigned long lastSampleTime;
     unsigned long launchDetectionStartTime;
 
@@ -50,9 +50,9 @@ private:
     int current_index = 0;
     int count = 0;
     float maxElevation = -INFINITY;
-    const float APOGEE_THRESHOLD = 5.0; // 5 meter decrease threshold
-    const float G_FORCE_THRESHOLD = 0.1; // 0.1G threshold
-    const int APOGEE_G_FORCE_COUNT = 15; // 15 consecutive low G-force readings for apogee
+    const float APOGEE_THRESHOLD = 3.0; // 5 meter decrease threshold
+    const float G_FORCE_THRESHOLD = 0.2; // 0.1G threshold
+    const int APOGEE_G_FORCE_COUNT = 10; // 15 consecutive low G-force readings for apogee
     int lowGForceCount = 0;
 
 

@@ -38,7 +38,7 @@ void Flight::LoopDataRecording() {
     }
 }
 
-// Once we have the idle values, average them and, move to IDLE_LAUNCH_READY state
+// Once we have the idle values, average them and, move to CALIBRATED_LAUNCH_READY state
 void Flight::getSensorIdleAverages() {
 
 
@@ -48,20 +48,20 @@ void Flight::getSensorIdleAverages() {
         sumElevation += elevationSamples[i];
         sumAcceleration += accelerationSamples[i];
     }
-    averageElevation = sumElevation / SAMPLE_SIZE;
-    averageAcceleration = sumAcceleration / SAMPLE_SIZE;
+    averageStartElevation = sumElevation / SAMPLE_SIZE;
+    averageStartAcceleration = sumAcceleration / SAMPLE_SIZE;
     
     // Verify the averages
     // TODO -log this instead of print
     Serial.println("Idle averages calculated. Ready for launch.");
     Serial.print("Average Elevation: ");
-    Serial.println(averageElevation);
+    Serial.println(averageStartElevation);
     Serial.print("Average Acceleration: ");
-    Serial.println(averageAcceleration);
+    Serial.println(averageStartAcceleration);
     
     // Sensor Average Complete!
-    // Move to IDLE_LAUNCH_READY state
-    setStatus(IDLE_LAUNCH_READY);
+    // Move to CALIBRATED_LAUNCH_READY state
+    setStatus(CALIBRATED_LAUNCH_READY);
 }
 
 void Flight::LoopIdleLaunchReady() {
@@ -71,14 +71,14 @@ void Flight::LoopIdleLaunchReady() {
         if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
             float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
             
-            if (currentElevation - averageElevation > LAUNCH_HEIGHT_THRESHOLD) {
+            if (currentElevation - averageStartElevation > LAUNCH_HEIGHT_THRESHOLD) {
                 elevationGainDetected = true;
                 Serial.println("Launch detected by altitude!");
                 // print current and average elevation
                 Serial.print("Current Elevation: ");
                 Serial.println(currentElevation);
                 Serial.print("Average Elevation: ");
-                Serial.println(averageElevation);
+                Serial.println(averageStartElevation);
             }
         }
     }
@@ -86,7 +86,7 @@ void Flight::LoopIdleLaunchReady() {
     
     if (!highGDetected) {
         float currentAccelerationMagnitude = m_lsmSensor->getAccelerationMagnitude();
-        if (currentAccelerationMagnitude > (averageAcceleration + LAUNCH_G_THRESHOLD)) {
+        if (currentAccelerationMagnitude > (averageStartAcceleration + LAUNCH_G_THRESHOLD)) {
             if (launchDetectionStartTime == 0) {
                 launchDetectionStartTime = m_pTimer->elapsedMilliseconds();
                 // print high g detected and start time
@@ -191,8 +191,19 @@ void Flight::LoopAscent() {
 }
 
 void Flight::LoopAfterApogee() {
-    // Placeholder function for after apogee phase
-    //Serial.println("After apogee phase");
+    double temperature, pressure;
+    if (m_bmpSensor->startTemperature() && m_bmpSensor->getTemperature(temperature) && m_bmpSensor->startPressure() && m_bmpSensor->getPressure(pressure, temperature)) {
+        float currentElevation = m_bmpSensor->altitude(pressure, 1013.25); // Assuming sea-level standard pressure is 1013.25 mb
+        
+        // From Jackson      
+        // if (currentStatus == APOGEE && bmp180.altitude(newPressure, avgPadPressure) < 275) {
+        //     setStatus(MAIN_CHUTE);
+        // }
+        if ((currentElevation - averageStartElevation) < 275 ) {
+            setStatus(IN_FLIGHT_MAIN_CHUTE_DEPLOYED);
+        }
+    }
+
 }
 
 void Flight::LoopFlightComplete() {

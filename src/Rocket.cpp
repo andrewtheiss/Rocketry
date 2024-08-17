@@ -36,7 +36,7 @@ void Rocket::setup() {
     pinMode(BLUEFRUIT_SPI_CS, OUTPUT); // Bluefruit CS pin
     
     delay(100);
-    flight.updateStatusIfOK(DATA_RECORDING);
+    flight.updateStatusIfOK(SENSOR_CALIBRATION_AND_SD_WRITE);
 }
 
 void Rocket::initFlight() {
@@ -113,7 +113,9 @@ void Rocket::loop() {
 
     // Update the flight
     flight.loop();
-
+    if (!dataCard.writeData(static_cast<DeviceRoutine*>(&flight))) {
+    Serial.printf("Failed to write data for device: %s\n", flight.getName());
+}
     debug();
     delay(10);
 }

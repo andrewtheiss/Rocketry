@@ -3,7 +3,7 @@
 
 Flight::Flight()
     : currentStatus(IDLE), m_pStatusLED(nullptr), m_lsmSensor(nullptr), m_bmpSensor(nullptr), m_pTimer(nullptr),
-      sampleIndex(0), averageElevation(0), averageAcceleration(0), lastSampleTime(0), launchDetectionStartTime(0) {}
+      sampleIndex(0), averageStartElevation(0), averageStartAcceleration(0), lastSampleTime(0), launchDetectionStartTime(0) {}
       
 void Flight::setStatus(FlightStatus status) {
     currentStatus = status;
@@ -31,10 +31,10 @@ void Flight::init() {
 
 void Flight::loop() {
     switch (currentStatus) {
-        case DATA_RECORDING:
+        case SENSOR_CALIBRATION_AND_SD_WRITE:
             LoopDataRecording();
             break;
-        case IDLE_LAUNCH_READY:
+        case CALIBRATED_LAUNCH_READY:
             LoopIdleLaunchReady();
             break;
         case IN_FLIGHT_ASCENT:
@@ -70,8 +70,8 @@ const char* Flight::getName() {
 const char* flightStatusToString(FlightStatus status) {
     switch (status) {
         case IDLE: return "IDLE";
-        case IDLE_LAUNCH_READY: return "IDLE_LAUNCH_READY";
-        case DATA_RECORDING: return "DATA_RECORDING";
+        case CALIBRATED_LAUNCH_READY: return "CALIBRATED_LAUNCH_READY";
+        case SENSOR_CALIBRATION_AND_SD_WRITE: return "SENSOR_CALIBRATION_AND_SD_WRITE";
         case IN_FLIGHT_ASCENT: return "IN_FLIGHT_ASCENT";
         case IN_FLIGHT_APOGEE: return "IN_FLIGHT_APOGEE";
         case IN_FLIGHT_MAIN_CHUTE_DEPLOYED: return "IN_FLIGHT_MAIN_CHUTE_DEPLOYED";
